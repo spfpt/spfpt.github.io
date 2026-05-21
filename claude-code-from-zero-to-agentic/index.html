@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <style>
 :root {
   --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -43,20 +44,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131316;
-    --bg-soft: #1B1B1F;
-    --bg-code: #0F0F12;
-    --ink: #E4E4E7;
-    --ink-soft: #A1A1AA;
-    --ink-mute: #71717A;
+    --bg: #19191D;
+    --bg-soft: #202126;
+    --bg-code: #111217;
+    --ink: #ECECEF;
+    --ink-soft: #B6B6BE;
+    --ink-mute: #85858F;
     --accent: #8FA3C2;
     --accent-soft: #B3C2DA;
-    --accent-bg: #1F2733;
-    --rule: #2A2A2E;
-    --rule-strong: #3A3A3F;
-    --code-border: #2A2A2E;
-    --selection: #2D3645;
-    --bar-bg: #1A1A1E;
+    --accent-bg: #27303D;
+    --rule: #303137;
+    --rule-strong: #454752;
+    --code-border: #3A3B44;
+    --selection: #334052;
+    --bar-bg: #1A1B20;
 
     --hl-comment: #71717A;
     --hl-keyword: #B89DD1;
@@ -70,20 +71,20 @@
 }
 
 [data-theme="dark"] {
-  --bg: #131316;
-  --bg-soft: #1B1B1F;
-  --bg-code: #0F0F12;
-  --ink: #E4E4E7;
-  --ink-soft: #A1A1AA;
-  --ink-mute: #71717A;
+  --bg: #19191D;
+  --bg-soft: #202126;
+  --bg-code: #111217;
+  --ink: #ECECEF;
+  --ink-soft: #B6B6BE;
+  --ink-mute: #85858F;
   --accent: #8FA3C2;
   --accent-soft: #B3C2DA;
-  --accent-bg: #1F2733;
-  --rule: #2A2A2E;
-  --rule-strong: #3A3A3F;
-  --code-border: #2A2A2E;
-  --selection: #2D3645;
-  --bar-bg: #1A1A1E;
+  --accent-bg: #27303D;
+  --rule: #303137;
+  --rule-strong: #454752;
+  --code-border: #3A3B44;
+  --selection: #334052;
+  --bar-bg: #1A1B20;
 
   --hl-comment: #71717A;
   --hl-keyword: #B89DD1;
@@ -120,7 +121,7 @@ body {
   background: var(--bg);
 }
 .topbar-inner {
-  max-width: 80rem;
+  max-width: 63.5rem;
   margin: 0 auto;
   padding: 0.8rem 1.75rem;
   display: flex;
@@ -128,13 +129,24 @@ body {
   align-items: center;
 }
 .brand {
-  font-weight: 500;
-  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   color: var(--ink);
   text-decoration: none;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.02em;
 }
 .brand:hover { color: var(--accent); }
+.brand-mark {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+.brand-word {
+  line-height: 1;
+}
 .actions { display: flex; gap: 0.25rem; align-items: center; }
 .iconbtn {
   background: transparent;
@@ -232,7 +244,7 @@ body {
 .toc-list a.active { color: var(--ink); font-weight: 500; }
 .toc-list a.active .num { color: var(--ink); }
 
-/* ARTICLE - text constrained + centered in viewport; visuals breathe wider */
+/* ARTICLE */
 .article {
   min-width: 0;
 }
@@ -246,7 +258,7 @@ body {
 .article > blockquote,
 .article > table,
 .article > hr {
-  max-width: 46rem;
+  max-width: 60rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -264,7 +276,7 @@ body {
   font-size: 1.12rem;
   color: var(--ink-soft);
   line-height: 1.55;
-  margin: 0 0 1.5rem 0;
+  margin: 0 auto 1.5rem;
 }
 
 .article h2 {
@@ -320,13 +332,15 @@ body {
 
 .article blockquote {
   margin: 1.4rem 0;
-  padding: 0.2rem 0 0.2rem 1rem;
-  border-left: 2px solid var(--rule-strong);
+  padding: 0.18rem 0 0.18rem 1.05rem;
+  border-left: 2px solid var(--accent-soft);
   color: var(--ink-soft);
   font-size: 0.98rem;
   line-height: 1.6;
 }
 .article blockquote p { margin: 0.35rem 0; }
+.article blockquote p:first-child { margin-top: 0; }
+.article blockquote p:last-child { margin-bottom: 0; }
 .article blockquote strong { color: var(--ink); }
 .article blockquote a { color: var(--accent); }
 
@@ -337,7 +351,7 @@ body {
   margin: 2.5rem 0;
 }
 
-/* IMAGES - moderate breakout for screenshots without changing reading width */
+/* IMAGES */
 .article p.image-row {
   margin: 1.45rem auto 1.7rem;
 }
@@ -481,7 +495,7 @@ body {
   margin-right: auto;
 }
 .article > pre {
-  max-width: 46rem;
+  max-width: 60rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -493,7 +507,7 @@ body {
 
 /* FOOTER */
 .colophon {
-  max-width: 72rem;
+  max-width: 63.5rem;
   margin: 0 auto;
   padding: 2.5rem 1.75rem 3.5rem;
   border-top: 1px solid var(--rule);
@@ -565,7 +579,7 @@ body {
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="../" class="brand">spfpt</a>
+    <a href="../" class="brand"><img class="brand-mark" src="../favicon.svg" alt="" aria-hidden="true"><span class="brand-word">spfpt</span></a>
     <div class="actions">
       <button class="iconbtn toc-toggle" aria-label="Open table of contents">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
@@ -613,12 +627,12 @@ body {
 <p>Please come back when <code>claude --version</code> works.</p>
 <h3 id="two-first-examples" tabindex="-1">Two first examples</h3>
 <p>In your terminal, <code>cd</code> into a project you know well. Any project. Then, run the following command:</p>
-<pre><code>claude
+<pre><code class="language-bash">claude
 </code></pre>
 <p><img src="./assets/welcome-banner.png" alt="welcome-banner"></p>
 <p>This is the welcome banner.</p>
 <p>A prompt appears. Try:</p>
-<pre><code>what does this repo do?
+<pre><code class="language-claude">what does this repo do?
 </code></pre>
 <p><img src="./assets/what-does-this-repo-do.png" alt="what-does-this-repo-do"></p>
 <p>Claude reads enough of your repo (README, top-level files, maybe <code>package.json</code> or <code>pyproject.toml</code>) to answer. You did nothing other than <code>cd</code> to the project directory and run <code>claude</code> and ask 1 simple question. That's the difference from ChatGPT.</p>
@@ -626,7 +640,7 @@ body {
 <pre><code class="language-bash">echo &quot;# README.md\n\nLearning LoRA and finetuning by doing my own experiment where I compare three versions of the same \`Qwen3-8B\` math run:\n\n1. the untouched baseline\n2. LoRA on the attention projections\n3. LoRA on both attention and feed-forward projections.\n\nThis project came to mind when I was reading the \&quot;LoRA Without Regret\&quot; blog post by Thinking Machines; so many research ideas to explore! Well, I only knew LoRA conceptually before this, and I have never done any serious finetuning before except for a hackathon, so I think this challenge I have set for myself is pretty nice.\n&quot; &gt; README.md
 </code></pre>
 <p>Now try:</p>
-<pre><code>@README.md what's missing from this README that a new contributor would want?
+<pre><code class="language-claude">@README.md what's missing from this README that a new contributor would want?
 </code></pre>
 <p><img src="./assets/whats-missing-from-this-readme.png" alt="whats-missing-from-this-readme"></p>
 <p>The <code>@</code> triggers a fuzzy file picker. Whatever you pick gets read into context. That's your first non-trivial superpower: <strong>Claude Code sees what you point at</strong>.</p>
@@ -687,7 +701,7 @@ body {
 </code></pre>
 <h3 id="init" tabindex="-1"><code>/init</code></h3>
 <p>The fastest way to get started: in a fresh <code>claude</code> session in your repo, type:</p>
-<pre><code>/init
+<pre><code class="language-claude">/init
 </code></pre>
 <p><img src="./assets/claudeinit.png" alt="claudeinit"></p>
 <p>Claude inspects the repo and proposes a <code>CLAUDE.md</code>. Review it, trim it, accept. Don't accept what it proposes as it is, because it could end up including too much.</p>
@@ -754,12 +768,12 @@ We use uv, not pip. We use ruff, not black.
 <p><img src="./assets/file-picker.png" alt="file-picker"></p>
 <h3 id="a-live-demo" tabindex="-1">A live demo</h3>
 <p>Let's create a draft blog post in our project directory. Type:</p>
-<pre><code>make a draft at drafts/hello.md with a short intro to Claude Code,
+<pre><code class="language-claude">make a draft at drafts/hello.md with a short intro to Claude Code,
 suitable for someone who's used chatgpt
 </code></pre>
 <p><img src="./assets/drafts-hello.png" alt="drafts-hello"></p>
 <p>Claude proposes the file, shows you the content, asks permission, and once you approve, it writes it. Now, paste the following command to Claude Code:</p>
-<pre><code>@drafts/hello.md add a 3-section TOC at the top: intro, examples,
+<pre><code class="language-claude">@drafts/hello.md add a 3-section TOC at the top: intro, examples,
 gotchas, and stub each section with a one-line placeholder.
 </code></pre>
 <p><img src="./assets/diff-of-new-toc.png" alt="diff-of-new-toc"></p>
@@ -804,7 +818,7 @@ gotchas, and stub each section with a one-line placeholder.
 </blockquote>
 <h3 id="permissions-allowlists" tabindex="-1"><code>/permissions</code> allowlists</h3>
 <p>You can pin specific commands as always-allowed. Inside a session:</p>
-<pre><code>/permissions allow Bash(npm run lint)
+<pre><code class="language-claude">/permissions allow Bash(npm run lint)
 /permissions allow Bash(pytest *)
 </code></pre>
 <p>Now those particular commands run without prompting, even in default mode. This is how you keep the prompts where they matter: destructive commands stay gated, the safe stuff stops nagging.</p>
@@ -823,7 +837,7 @@ claude --resume my-oauth    # jump to a named session
 <p><img src="./assets/claude-resume.png" alt="claude-resume"></p>
 <h3 id="naming-sessions" tabindex="-1">Naming sessions</h3>
 <p>Inside a session:</p>
-<pre><code>/rename my-oauth-refactor
+<pre><code class="language-claude">/rename my-oauth-refactor
 </code></pre>
 <p>A name is much easier to find later than &quot;ff347a49-e961-444f-9dae-28553602ead5&quot;.
 Rename anything you might want to come back to.</p>
@@ -853,22 +867,22 @@ Rename anything you might want to come back to.</p>
 <p>Every file Claude reads, every command it runs, every output it sees, all of it goes into the context window. Long sessions get slow, expensive, and increasingly weird (the model starts forgetting what you said two hours ago).</p>
 <p>You have four tools to manage this. Use the right one.</p>
 <h3 id="compact-in-place-summary" tabindex="-1"><code>/compact</code> : in-place summary</h3>
-<pre><code>/compact
+<pre><code class="language-claude">/compact
 </code></pre>
 <p>Claude summarizes the current session in place, keeping the gist and dropping the detail. The conversation continues from the summary.</p>
 <p><img src="./assets/compact.png" alt="compact"></p>
 <p>You can pass instructions:</p>
-<pre><code>/compact preserve the test failures and the chosen API design
+<pre><code class="language-claude">/compact preserve the test failures and the chosen API design
 </code></pre>
 <p>The summary will keep what you asked it to keep. This is the single most underused command in Claude Code. Please run it between major phases of a long task.</p>
 <h3 id="clear-start-fresh-same-repo" tabindex="-1"><code>/clear</code> : start fresh, same repo</h3>
-<pre><code>/clear
+<pre><code class="language-claude">/clear
 </code></pre>
 <p>Wipes the conversation. CLAUDE.md still loads. Use this when you finish one task and want to start a different one in the same project. Boris Cherny's <a href="https://howborisusesclaudecode.com/">advice</a> is to <code>/clear</code> aggressively --- you'll be amazed how much faster the next task feels.</p>
 <h3 id="rewind-summarize-from-here-partial-compact" tabindex="-1"><code>/rewind</code> &quot;summarize from here&quot; : partial compact</h3>
 <p>We saw this in §5. It's another knob: keep the recent turns intact, summarize the older ones. Best when you've just made progress and don't want to lose detail on the last bit, but the early exploration can go.</p>
 <h3 id="btw-the-side-question" tabindex="-1"><code>/btw</code> : the side question</h3>
-<pre><code>/btw what's the difference between Sonnet and Opus?
+<pre><code class="language-claude">/btw what's the difference between Sonnet and Opus?
 </code></pre>
 <p><code>/btw</code> opens a dismissible overlay. Your question and Claude's answer don't enter the conversation history. Use this for context you want now and don't want polluting the session later.</p>
 <p><img src="./assets/btw.png" alt="btw"></p>
@@ -890,13 +904,13 @@ When compacting, always preserve:
 <p>A skill is a packaged instruction set you can invoke with <code>/skill-name</code>. Think of it as a reusable prompt with optional tool restrictions --- &quot;the way I want Claude to do X&quot; baked into one slash command.</p>
 <h3 id="skills" tabindex="-1"><code>/skills</code></h3>
 <p>In a session, type:</p>
-<pre><code>/skills
+<pre><code class="language-claude">/skills
 </code></pre>
 <p><img src="./assets/skills.png" alt="skills"></p>
 <p>You see what's currently loaded: both user-level (from <code>~/.claude/skills/</code>) and project-level (from <code>./.claude/skills/</code>).</p>
 <p>A fresh install has none. Let's install some.</p>
 <h3 id="plugin-and-the-marketplace" tabindex="-1"><code>/plugin</code> and the marketplace</h3>
-<pre><code>/plugin
+<pre><code class="language-claude">/plugin
 </code></pre>
 <p><img src="./assets/plugins.png" alt="plugins"></p>
 <p>A plugin bundles one or more skills (plus optional hooks and MCP servers) into one installable unit. The official Anthropic marketplace, <code>claude-plugins-official</code>, is the place to start.</p>
@@ -931,16 +945,16 @@ When compacting, always preserve:
 <h3 id="invoking-skills" tabindex="-1">Invoking skills</h3>
 <p>Two patterns, both work:</p>
 <p><strong>Leading.</strong> Skill at the start of the prompt:</p>
-<pre><code>/frontend-design look at @src/cute/blackwell_helpers.py and design a modern and clean HTML UI for me to visualize this code intuitively.
+<pre><code class="language-claude">/frontend-design look at @src/cute/blackwell_helpers.py and design a modern and clean HTML UI for me to visualize this code intuitively.
 </code></pre>
 <p><strong>Mid-prompt.</strong> Skill embedded in a larger instruction:</p>
-<pre><code>fix the failing test in @examples/inference/test_blackwell_helpers.py, then /code-simplifier the result.
+<pre><code class="language-claude">fix the failing test in @examples/inference/test_blackwell_helpers.py, then /code-simplifier the result.
 </code></pre>
 <p>Mid-prompt invocations work because skills are mounted as tools Claude can call; you're cueing it to use the tool, not running a separate command.</p>
 <h3 id="three-demos" tabindex="-1">Three demos</h3>
 <p><strong>Demo 1: <code>/frontend-design</code> on a codebase with complex logic.</strong></p>
 <p>Suppose I want to visualize the code in <a href="https://github.com/Dao-AILab/flash-attention/blob/main/flash_attn/cute/flash_fwd.py">src/cute/flash_fwd.py</a> since it's getting too complex for me.</p>
-<pre><code>look at @src/cute/flash_fwd.py and design a modern and clean HTML UI for me to visualize this code intuitively.
+<pre><code class="language-claude">/frontend-design look at @src/cute/flash_fwd.py and design a modern and clean HTML UI for me to visualize this code intuitively.
 </code></pre>
 <p><img src="./assets/frontend-design-skill.png" alt="frontend-design-skill"></p>
 <p>Here's what Opus 4.7 with xhigh effort and the <code>frontend-design</code> skill generated with just a single prompt.</p>
@@ -948,7 +962,7 @@ When compacting, always preserve:
 <p>Not a bad first iteration I think! Pretty interactive as well; I could learn from this.</p>
 <p><strong>Demo 2: <code>/frontend-design</code> to further improve the UI.</strong></p>
 <p>Suppose I want to further improve the UI. I can ask Claude to do so with the <code>frontend-design</code> skill again:</p>
-<pre><code>please help me improve this ui further for this file. pasting the screenshot here to show you how it looks: [Image #1]. this is genuinely good, but the text could be a bit more legible, perhaps? continue to use the /frontend-design skill
+<pre><code class="language-claude">please help me improve this ui further for this file. pasting the screenshot here to show you how it looks: [Image #1]. this is genuinely good, but the text could be a bit more legible, perhaps? continue to use the /frontend-design skill
 </code></pre>
 <p><img src="./assets/frontend-design-2nd-prompt.png" alt="frontend-design-2nd-prompt"></p>
 <p>Which gives me:</p>
@@ -1131,7 +1145,7 @@ Before committing, scan your diff for type-casts-to-any, defensive fallbacks, re
 </tr>
 </tbody>
 </table>
-<h3 id="settingsjson" tabindex="-1">Settings.json</h3>
+<h3 id="settingsjson" tabindex="-1">settings.json</h3>
 <p>Hooks live in <code>.claude/settings.json</code> (project) or <code>~/.claude/settings.json</code> (user). Shape is usually something like this:</p>
 <pre><code class="language-json">{
   &quot;hooks&quot;: {
@@ -1374,12 +1388,11 @@ file:line reference, and a one-sentence fix suggestion.
 <li>Every Monday, summarize last week's commits.</li>
 <li>Every hour during a deploy, check the health endpoint and alert on regressions.</li>
 </ul>
-<p><code>[Screenshot: /schedule creating a &quot;stale-prs-daily&quot; routine with cron expression &quot;0 9 * * 1-5&quot;]</code></p>
 <p>Routines are visible at <a href="https://claude.ai/code">claude.ai/code</a>, where you can pause, edit, or delete them from the web UI.</p>
 <p>I've used routines for a couple of research projects where I would get updates every morning on the new research directions the cron job found via my Slack app that allowed me to quickly check in on the research on my way to work and take action if needed. I love this feature.</p>
 <h3 id="loop" tabindex="-1"><code>/loop</code></h3>
 <p>Where <code>/schedule</code> is &quot;every X minutes/days from now until I cancel&quot;, <code>/loop</code> is &quot;every X minutes inside this session until the task is done&quot;. Here's an example:</p>
-<pre><code>/loop 5m check if the deploy completed; if yes, run the smoke tests; if no, wait
+<pre><code class="language-claude">/loop 5m check if the deploy completed; if yes, run the smoke tests; if no, wait
 </code></pre>
 <p>Two modes:</p>
 <ul>
@@ -1389,7 +1402,7 @@ file:line reference, and a one-sentence fix suggestion.
 <p>Best use case: babysitting a long-running external process. CI runs, deploys, big migrations, etc. I used this one when I ran a 2-day long GPU training job for my research project. Very useful!</p>
 <h3 id="goal" tabindex="-1"><code>/goal</code></h3>
 <p>This one shipped in <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.139">v2.1.139</a> (May 2026). It's the &quot;keep working until done&quot; primitive. Here's an example:</p>
-<pre><code>/goal npm test exits 0 and there are no TypeScript errors
+<pre><code class="language-claude">/goal npm test exits 0 and there are no TypeScript errors
 </code></pre>
 <p>Mechanics:</p>
 <ul>
@@ -1402,7 +1415,7 @@ file:line reference, and a one-sentence fix suggestion.
 <p>The trap to avoid: <strong>vague goals run forever</strong>. &quot;Make this better&quot; is not a goal; there's no verifiable end state. &quot;All 12 unit tests pass&quot; is a goal. Combine <code>/goal</code> with <a href="#9-guardrails-hooks">section 9 (hooks)</a> and you have an autonomous worker that won't wander off. This can be pretty useful for people who have infinite token budgets and are planning to migrate big codebases from one language to another, or a huge refactor that needs to be done in multiple steps, and so on. This + the <code>/plan</code> mode can be a very powerful combination.</p>
 <h3 id="batch" tabindex="-1"><code>/batch</code></h3>
 <p>Fan-out: run the same prompt across multiple inputs (files, branches, items in a list).</p>
-<pre><code>/batch on each file under src/api/handlers/, add JSDoc to exported functions
+<pre><code class="language-claude">/batch on each file under src/api/handlers/, add JSDoc to exported functions
 </code></pre>
 <p>Each input gets processed in a separate context (so they don't interfere with each other). Useful for &quot;apply this change to all of X&quot; tasks. Reports back when each finishes.</p>
 <h3 id="background-tasks" tabindex="-1">Background tasks</h3>
@@ -1455,7 +1468,7 @@ cd ../db-migration &amp;&amp; claude
 <li><strong>Throwaway debugging UI.</strong> I had a stream of 800 events to triage. Claude built a one-page HTML viewer with a search box and filters. Took less time than <code>head -200 events.jsonl | jq</code>.</li>
 </ul>
 <p>Try it once. Ask Claude:</p>
-<pre><code>generate an interactive HTML file at status.html showing the four sections
+<pre><code class="language-claude">generate an interactive HTML file at status.html showing the four sections
 of this post as a clickable outline, with each section expandable to show
 the bullets underneath. inline css, no external deps.
 </code></pre>
@@ -1471,7 +1484,7 @@ the bullets underneath. inline css, no external deps.
 <h2 id="12-the-not-so-cool-basics-that-actually-matter" tabindex="-1">12. The not-so-cool basics that actually matter</h2>
 <p>This section is the one I wish someone had handed me on day one.</p>
 <h3 id="usage" tabindex="-1"><code>/usage</code></h3>
-<pre><code>/usage
+<pre><code class="language-claude">/usage
 </code></pre>
 <p>Token usage for the current session, plus your weekly total. Check it whenever you've done a lot of work - it grounds your intuition about which tasks are cheap and which aren't.</p>
 <h3 id="status" tabindex="-1"><code>/status</code></h3>
@@ -1509,7 +1522,7 @@ the bullets underneath. inline css, no external deps.
 <h3 id="weekly-cap" tabindex="-1">Weekly cap</h3>
 <p>Hard 7-day rolling cap. Shared across claude.ai, the IDE plugin, and Claude Code. If you're hitting weekly caps, the math says you're not getting the value of the next tier up; so it's time to upgrade or to be more deliberate about <code>/clear</code>.</p>
 <h3 id="model" tabindex="-1"><code>/model</code></h3>
-<pre><code>/model
+<pre><code class="language-claude">/model
 </code></pre>
 <p>Switches between the three current models (as of May 2026, the 3 models are Haiku 4.5, Sonnet 4.6 - normal + 1m, and Opus 4.7 in the Claude subscription. NOT the models in the Claude Code API). Rule of thumb:</p>
 <table>
@@ -1679,7 +1692,6 @@ the bullets underneath. inline css, no external deps.
       const m = code.className.match(/language-([a-z0-9]+)/i);
       if (m) lang = m[1];
     }
-
     // Syntax highlight if we have a language and hljs loaded
     if (lang && typeof hljs !== 'undefined' && hljs.getLanguage && hljs.getLanguage(lang)) {
       try { hljs.highlightElement(code); } catch (e) { /* ignore */ }
