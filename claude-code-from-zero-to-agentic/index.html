@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code, from zero to agentic — spfpt</title>
+<meta name="description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows. CLAUDE.md, plan mode, skills, hooks, sandboxes, /goal, and the rest.">
+<meta property="og:title" content="Claude Code, from zero to agentic">
+<meta property="og:description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Geist Mono", "SF Mono", Menlo, monospace;
+
+  --bg: #FAFAF7;
+  --bg-soft: #F3F2EE;
+  --bg-code: #F4F3EE;
+  --ink: #18181B;
+  --ink-soft: #52525B;
+  --ink-mute: #A1A1AA;
+  --accent: #5D7290;
+  --accent-soft: #8FA3C2;
+  --rule: #E4E4DF;
+  --rule-strong: #D4D3CD;
+  --code-border: #DEDDD7;
+  --selection: #D9E0EB;
+  --bar-bg: #EDECE7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131316;
+    --bg-soft: #1B1B1F;
+    --bg-code: #0F0F12;
+    --ink: #E4E4E7;
+    --ink-soft: #A1A1AA;
+    --ink-mute: #71717A;
+    --accent: #8FA3C2;
+    --accent-soft: #B3C2DA;
+    --rule: #2A2A2E;
+    --rule-strong: #3A3A3F;
+    --code-border: #2A2A2E;
+    --selection: #2D3645;
+    --bar-bg: #1A1A1E;
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #131316;
+  --bg-soft: #1B1B1F;
+  --bg-code: #0F0F12;
+  --ink: #E4E4E7;
+  --ink-soft: #A1A1AA;
+  --ink-mute: #71717A;
+  --accent: #8FA3C2;
+  --accent-soft: #B3C2DA;
+  --rule: #2A2A2E;
+  --rule-strong: #3A3A3F;
+  --code-border: #2A2A2E;
+  --selection: #2D3645;
+  --bar-bg: #1A1A1E;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+::selection { background: var(--selection); color: var(--ink); }
+
+/* TOP BAR */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color 200ms ease;
+}
+.topbar.scrolled { border-bottom-color: var(--rule); }
+.topbar-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.brand:hover { color: var(--accent); }
+.actions { display: flex; gap: 0.4rem; align-items: center; }
+.iconbtn {
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: color 150ms, border-color 150ms, background-color 150ms;
+}
+.iconbtn:hover { color: var(--ink); border-color: var(--rule-strong); background: var(--bg-soft); }
+.iconbtn svg { width: 15px; height: 15px; }
+.theme-toggle .sun { display: none; }
+.theme-toggle .moon { display: block; }
+[data-theme="dark"] .theme-toggle .sun { display: block; }
+[data-theme="dark"] .theme-toggle .moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .sun { display: block; }
+  :root:not([data-theme="light"]) .theme-toggle .moon { display: none; }
+}
+.toc-toggle { display: none; }
+
+/* LAYOUT */
+.layout {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 13rem;
+  gap: 3rem;
+}
+
+/* SIDEBAR TOC */
+.toc {
+  position: sticky;
+  top: 4.5rem;
+  align-self: start;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  font-size: 0.82rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--rule);
+}
+.toc::-webkit-scrollbar { width: 4px; }
+.toc::-webkit-scrollbar-track { background: transparent; }
+.toc::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 2px; }
+.toc-label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 0.85rem 0;
+  font-weight: 500;
+}
+.toc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.toc-list a {
+  display: flex;
+  gap: 0.55rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  line-height: 1.35;
+  font-size: 0.82rem;
+  transition: color 150ms ease;
+}
+.toc-list a:hover { color: var(--ink); }
+.toc-list a .num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-mute);
+  flex: 0 0 1.4rem;
+  padding-top: 0.1rem;
+}
+.toc-list a.active { color: var(--accent); }
+.toc-list a.active .num { color: var(--accent); }
+
+/* ARTICLE */
+.article { max-width: 38rem; min-width: 0; }
+
+.article > h1 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 1rem 0 1.3rem 0;
+  color: var(--ink);
+}
+
+.article > p:first-of-type {
+  font-size: 1.12rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin: 0 0 1.5rem 0;
+}
+
+.article h2 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.55rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 4rem 0 1.1rem 0;
+  color: var(--ink);
+  scroll-margin-top: 4rem;
+}
+.article h2 .secnum {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.article h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.12rem;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  margin: 2.4rem 0 0.7rem 0;
+  color: var(--ink);
+  scroll-margin-top: 5rem;
+}
+
+.article h4 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.96rem;
+  letter-spacing: 0;
+  margin: 1.8rem 0 0.55rem 0;
+  color: var(--ink);
+  scroll-margin-top: 5rem;
+}
+
+.article p { margin: 0 0 1.05rem 0; }
+
+.article a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 150ms ease, color 150ms ease;
+}
+.article a:hover {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
+}
+
+.article strong { font-weight: 600; color: var(--ink); }
+.article em { font-style: italic; }
+
+.article ul, .article ol { padding-left: 1.3rem; margin: 0 0 1.2rem 0; }
+.article li { margin: 0.28rem 0; }
+.article li::marker { color: var(--ink-mute); }
+
+.article blockquote {
+  margin: 1.4rem 0;
+  padding: 0.2rem 0 0.2rem 1rem;
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-soft);
+  font-style: normal;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+.article blockquote p { margin: 0.35rem 0; }
+.article blockquote strong { color: var(--ink); }
+.article blockquote a { color: var(--accent); }
+
+.article hr {
+  border: 0;
+  height: 1px;
+  background: var(--rule);
+  margin: 2.5rem 0;
+}
+
+.article img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.4rem 0;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--bg-soft);
+}
+
+/* INLINE CODE */
+.article code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  padding: 0.06em 0.35em;
+  border-radius: 4px;
+  color: var(--ink);
+}
+
+/* CODE BLOCKS — the focus */
+.article pre {
+  background: var(--bg-code);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  padding: 0;
+  margin: 1.3rem 0;
+  overflow: hidden;
+  position: relative;
+}
+.article pre .codebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.85rem 0.45rem 1rem;
+  background: var(--bar-bg);
+  border-bottom: 1px solid var(--code-border);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--ink-mute);
+  user-select: none;
+  min-height: 30px;
+}
+.article pre .codebar .lang { color: var(--ink-soft); font-weight: 500; }
+.article pre .codebar .lang:empty::before { content: "code"; color: var(--ink-mute); }
+.article pre .copy-btn {
+  background: transparent;
+  border: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  cursor: pointer;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 150ms, background-color 150ms;
+}
+.article pre .copy-btn:hover { color: var(--ink); background: var(--bg-soft); }
+.article pre .copy-btn.copied { color: var(--accent); }
+.article pre .copy-btn svg { width: 12px; height: 12px; }
+.article pre code {
+  display: block;
+  background: transparent;
+  border: 0;
+  padding: 1rem 1.15rem;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre;
+  border-radius: 0;
+}
+
+/* TABLES */
+.article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.4rem 0;
+  font-size: 0.93rem;
+}
+.article th, .article td {
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.article th {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.article tr:last-child td { border-bottom: 0; }
+.article table code { font-size: 0.82em; }
+
+/* FOOTER */
+.colophon {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-mute);
+  font-size: 0.84rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.colophon a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--rule); transition: color 150ms, border-color 150ms; }
+.colophon a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* SKIP LINK */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  z-index: 100;
+  text-decoration: none;
+}
+.skip-link:focus { top: 1rem; }
+
+/* RESPONSIVE */
+@media (max-width: 920px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 2rem 1.25rem 4rem;
+  }
+  .toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(85vw, 20rem);
+    height: 100dvh;
+    padding: 4.5rem 1.5rem 2rem;
+    background: var(--bg);
+    border-left: 1px solid var(--rule);
+    transform: translateX(100%);
+    transition: transform 220ms ease;
+    z-index: 20;
+    box-shadow: -2px 0 30px rgba(0,0,0,0.06);
+  }
+  .toc.open { transform: translateX(0); }
+  .toc-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(24, 24, 27, 0.3);
+    z-index: 15;
+  }
+  .toc-backdrop.open { display: block; }
+  .toc-toggle { display: inline-flex; }
+  .article > h1 { font-size: clamp(1.8rem, 6.5vw, 2.4rem); }
+  .article h2 { font-size: 1.4rem; margin-top: 3rem; }
+  .article h3 { font-size: 1.06rem; }
+  .colophon { padding: 2rem 1.25rem 3rem; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 15.5px; }
+  .article pre code { font-size: 0.78rem; padding: 0.8rem 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../" class="brand">spfpt</a>
+    <div class="actions">
+      <button class="iconbtn toc-toggle" aria-label="Open table of contents">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+      </button>
+      <button class="iconbtn theme-toggle" aria-label="Toggle dark mode">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="toc-backdrop"></div>
+
+<div class="layout">
+  <main id="main" class="article">
+    <h1>Claude Code, from zero to agentic</h1>
+<p>A working guide for people who are comfortable with ChatGPT and want to make Claude Code feel the same way, and then go three or four steps further.</p>
+<p>This is long, on purpose. I advice you to read it top to bottom the first time. Bookmark it, and come back to §7 onwards when you actually need them.</p>
+<blockquote>
+<p>Targets Claude Code v2.1.145, May 2026. Versions move fast, so I'll flag features that shipped recently so you can sanity-check against the <a href="https://github.com/anthropics/claude-code/releases">release notes</a> if something looks off.</p>
+</blockquote>
+
+<h2 id="1-from-chatgpt-to-claude-code" tabindex="-1">1. From ChatGPT to Claude Code</h2>
+<p>If you've used ChatGPT, you already understand 80% of how Claude Code works. The other 20% is what makes it dangerous, but in the good way.</p>
+<p>Claude Code is not a chat. It's a CLI agent that lives next to your code. You give it a prompt, and instead of just talking back, it can:</p>
+<ul>
+<li>read files in your project,</li>
+<li>run shell commands,</li>
+<li>and edit code on disk</li>
+</ul>
+<p>... all with your permission. Think of it as a senior pair-programmer with hands.</p>
+<h3 id="where-you-can-run-it" tabindex="-1">Where you can run it</h3>
+<p>You have four main options. I'll list them in order of how much I use them:</p>
+<ol>
+<li><strong>Terminal (recommended).</strong> Just <code>claude</code> in any directory. This is the canonical experience, all features land here first, and the keyboard-only workflow stops feeling weird after about a day. Everything in this post assumes you're here.</li>
+<li><strong>VS Code / Cursor / JetBrains plugin (second-best).</strong> Same engine, but the diff previews are nicer and you stay in your editor. If you prefer to live in your IDE, install this. However, please keep in mind that this is not as mature as the terminal experience.</li>
+<li><strong>Desktop app (Mac / Windows).</strong> Polished UI, good for non-coding tasks and conversations where you want a real text editor. Some advanced flags and slash commands take longer to ship here. I've heard that the desktop app has a few bugs and is not as stable as the terminal experience, but I haven't used this myself.</li>
+<li><strong>Web at <a href="https://claude.ai/code">claude.ai/code</a>.</strong> Best for one-off questions when you're away from your machine, triggering &quot;ultraplan&quot; mode, or for kicking off <a href="#11-truly-agentic-the-advanced-features">scheduled routines</a> that run on Anthropic's infra. This is usually not where you want to do your daily work.</li>
+</ol>
+<h3 id="installation" tabindex="-1">Installation</h3>
+<p>Install instructions move around enough that I won't reproduce them here. Please refer to the <a href="https://docs.claude.com/en/docs/claude-code/quickstart">official quickstart</a>.</p>
+<p>If you're using Windows, I highly recommend you to use the Windows Subsystem for Linux (WSL) and install Claude Code in the WSL terminal so that every time you open Claude Code, you always open the latest version. But normal terminal experience inside Windows PowerShell or Command Prompt is also fine, although this may mean you need to manually update Claude Code from time to time since WinGet installs do not auto-update. But at the end of the day, it's up to you.</p>
+<p>If you're using macOS, please use curl to install Claude Code (this is the native way that Anthropic recommends as well). Based on personal experience, I do not recommend using Homebrew.</p>
+<p>Please come back when <code>claude --version</code> works.</p>
+<h3 id="two-first-examples" tabindex="-1">Two first examples</h3>
+<p>In your terminal, <code>cd</code> into a project you know well. Any project. Then, run the following command:</p>
+<pre><code>claude
+</code></pre>
+<p><img src="./assets/welcome-banner.png" alt="welcome-banner"></p>
+<p>This is the welcome banner.</p>
+<p>A prompt appears. Try:</p>
+<pre><code>what does this repo do?
+</code></pre>
+<p><img src="./assets/what-does-this-repo-do.png" alt="what-does-this-repo-do"></p>
+<p>Claude reads enough of your repo (README, top-level files, maybe <code>package.json</code> or <code>pyproject.toml</code>) to answer. You did nothing other than <code>cd</code> to the project directory and run <code>claude</code> and ask 1 simple question. That's the difference from ChatGPT.</p>
+<p>If you do not yet have a README.md file in your project, please paste the following command to create it (if you already have a README.md file, please skip this step):</p>
+<pre><code class="language-bash">echo &quot;# README.md\n\nLearning LoRA and finetuning by doing my own experiment where I compare three versions of the same \`Qwen3-8B\` math run:\n\n1. the untouched baseline\n2. LoRA on the attention projections\n3. LoRA on both attention and feed-forward projections.\n\nThis project came to mind when I was reading the \&quot;LoRA Without Regret\&quot; blog post by Thinking Machines; so many research ideas to explore! Well, I only knew LoRA conceptually before this, and I have never done any serious finetuning before except for a hackathon, so I think this challenge I have set for myself is pretty nice.\n&quot; &gt; README.md
+</code></pre>
+<p>Now try:</p>
+<pre><code>@README.md what's missing from this README that a new contributor would want?
+</code></pre>
+<p><img src="./assets/whats-missing-from-this-readme.png" alt="whats-missing-from-this-readme"></p>
+<p>The <code>@</code> triggers a fuzzy file picker. Whatever you pick gets read into context. That's your first non-trivial superpower: <strong>Claude Code sees what you point at</strong>.</p>
+<h3 id="the-mental-model" tabindex="-1">The mental model</h3>
+<blockquote>
+<p>Claude Code is ChatGPT that can see your filesystem and run things with permission.</p>
+</blockquote>
+<p>That sentence does about 90% of the work. Keep it in mind every time you're tempted to copy-paste code into a chat. You don't need to. Just point Claude at the file.</p>
+<hr>
+<h2 id="2-claudemd-is-the-most-important-file-in-your-repo" tabindex="-1">2. CLAUDE.md is the most important file in your repo</h2>
+<p>If you remember one thing from this post: <strong>drop a <code>CLAUDE.md</code> in your repo</strong>. It might as well be the single highest-leverage change you can make.</p>
+<p><code>CLAUDE.md</code> is a markdown file that Claude Code auto-loads at the start of every session in that directory. It's how you tell Claude things it can't infer from the code --- conventions, commands, gotchas, &quot;we use uv not pip&quot; --- so you don't have to repeat yourself.</p>
+<h3 id="where-it-lives" tabindex="-1">Where it lives</h3>
+<p>Claude Code looks for <code>CLAUDE.md</code> in three places, in this order:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~/.claude/CLAUDE.md</code></td>
+<td>User-level. Your personal preferences, applied to every project.</td>
+</tr>
+<tr>
+<td><code>&lt;repo&gt;/CLAUDE.md</code></td>
+<td>Project-level. Goes in git, shared with the team.</td>
+</tr>
+<tr>
+<td><code>&lt;repo&gt;/&lt;subdir&gt;/CLAUDE.md</code></td>
+<td>Subdirectory-level. Loaded only when you're working in that subtree.</td>
+</tr>
+</tbody>
+</table>
+<p>Plus <code>CLAUDE.local.md</code>, which is the same as <code>&lt;repo&gt;/CLAUDE.md</code> but conventionally <code>.gitignore</code>d. Use it for personal notes that shouldn't be committed.</p>
+<p>Personally, I prefer to keep my <code>CLAUDE.md</code> in the root of the project directory and do not prefer to put it at a user level. For instance:</p>
+<pre><code class="language-bash">project-name/
+├── src/
+│   ├── cute/
+│   │   ├── blackwell_helpers.py
+│   │   ├── flash_fwd.py
+│   │   └── paged_kv.py
+│   ├── layers/
+│   ├── models/
+├── examples/
+│   ├── inference/
+├── docs/
+│   ├── architecture.md
+│   └── testing-guidelines.md
+├── CLAUDE.md      # &lt;-- here
+├── .gitignore
+├── .env
+├── Makefile
+├── README.md
+└── LICENSE
+</code></pre>
+<h3 id="init" tabindex="-1"><code>/init</code></h3>
+<p>The fastest way to get started: in a fresh <code>claude</code> session in your repo, type:</p>
+<pre><code>/init
+</code></pre>
+<p><img src="./assets/claudeinit.png" alt="claudeinit"></p>
+<p>Claude inspects the repo and proposes a <code>CLAUDE.md</code>. Review it, trim it, accept. Don't accept what it proposes as it is, because it could end up including too much.</p>
+<h3 id="what-goes-in-a-good-claudemd" tabindex="-1">What goes in a good CLAUDE.md</h3>
+<p>Anthropic's <a href="https://docs.claude.com/en/docs/claude-code/best-practices">best-practices doc</a> has a nice ✅/❌ table, the spirit of it is:</p>
+<p>✅ Include:</p>
+<ul>
+<li>Bash commands Claude can't guess (<code>npm run lint</code>, <code>make watch</code>, <code>pnpm test:integration</code>).</li>
+<li>Code style rules that aren't in a linter config (<code>prefer named exports</code>, <code>match the existing pattern in src/api/</code>).</li>
+<li>Workflow conventions (<code>always update the changelog</code>, <code>branch from main</code>, <code>we squash on merge</code>).</li>
+<li>Repository quirks (<code>the .env in services/auth is different from the others</code>, <code>don't touch generated/</code>).</li>
+</ul>
+<p>❌ Exclude:</p>
+<ul>
+<li>Anything Claude already does well by default. If you ask Claude to fix a bug and it already writes a test, don't add &quot;write tests for bugs&quot; to CLAUDE.md.</li>
+<li>Long rationale. Save the why for a design doc.</li>
+<li>Restating the file tree. Claude can <code>ls</code>.</li>
+<li>Catch-all rules so vague they're never load-bearing (&quot;be careful&quot;, &quot;use good judgment&quot;).</li>
+</ul>
+<p>Boris Cherny, the inventor of Claude Code, puts it bluntly in his <a href="https://howborisusesclaudecode.com/">Claude Code patterns post</a>: if Claude already does the thing without the instruction, delete the instruction. <code>CLAUDE.md</code> is a place for friction, not flavor.</p>
+<h3 id="importing-other-files" tabindex="-1">Importing other files</h3>
+<p>You can import other files into CLAUDE.md with the <code>@</code> syntax:</p>
+<pre><code class="language-markdown"># Conventions for this repo
+
+We use uv, not pip. We use ruff, not black.
+
+@./docs/architecture.md
+@./docs/testing-guidelines.md
+</code></pre>
+<p>Imports are resolved at session start, so if <code>architecture.md</code> is long, expect it in the context window from turn one.</p>
+<h3 id="auto-memory" tabindex="-1">Auto memory</h3>
+<p>Claude Code has a feature where Claude builds up its own memory across sessions: small notes about your role, your preferences, project state. You don't manage it directly; it lives under <code>~/.claude/projects/&lt;project-hash&gt;/memory/</code>. You don't really need to do anything about this! I just think it's good to know about it because it means <code>CLAUDE.md</code> is no longer your <em>only</em> persistence mechanism, but it's still the one <em>you</em> control, and the one new sessions trust first.</p>
+<hr>
+<h2 id="3-asking-claude-to-do-real-work" tabindex="-1">3. Asking Claude to do real work</h2>
+<p>You have CLAUDE.md. Now: how do you actually get Claude to <em>do</em> something?</p>
+<h3 id="the-four-input-primitives" tabindex="-1">The four input primitives</h3>
+<table>
+<thead>
+<tr>
+<th>You type</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@filename</code></td>
+<td>Fuzzy file picker. Selected file gets read into context.</td>
+</tr>
+<tr>
+<td><code>!command</code></td>
+<td>Run a shell command and inject its output into the prompt.</td>
+</tr>
+<tr>
+<td>Drag/drop image</td>
+<td>Image goes into context (paste also works).</td>
+</tr>
+<tr>
+<td><code>cat err.log | claude -p &quot;...&quot;</code></td>
+<td>Pipe stdin into a one-shot prompt.</td>
+</tr>
+</tbody>
+</table>
+<p>The first one is the workhorse. Once you internalize <code>@</code>, you stop copy-pasting forever.</p>
+<p><img src="./assets/file-picker.png" alt="file-picker"></p>
+<h3 id="a-live-demo" tabindex="-1">A live demo</h3>
+<p>Let's create a draft blog post in our project directory. Type:</p>
+<pre><code>make a draft at drafts/hello.md with a short intro to Claude Code,
+suitable for someone who's used chatgpt
+</code></pre>
+<p><img src="./assets/drafts-hello.png" alt="drafts-hello"></p>
+<p>Claude proposes the file, shows you the content, asks permission, and once you approve, it writes it. Now, paste the following command to Claude Code:</p>
+<pre><code>@drafts/hello.md add a 3-section TOC at the top: intro, examples,
+gotchas, and stub each section with a one-line placeholder.
+</code></pre>
+<p><img src="./assets/diff-of-new-toc.png" alt="diff-of-new-toc"></p>
+<p>It read the file, computed the edit, showed you the diff, asked permission. Three things just happened that didn't happen in ChatGPT: it read a real file, it wrote to disk, and it presented a diff you could approve or deny.</p>
+<h3 id="prompting-that-works" tabindex="-1">Prompting that works</h3>
+<p>You can prompt Claude like ChatGPT and it'll do okay. You can prompt it slightly better and it'll do much better. The four moves from the <a href="https://docs.claude.com/en/docs/claude-code/best-practices">best-practices doc</a>, condensed:</p>
+<ol>
+<li><strong>Scope the task.</strong> &quot;Fix the bug&quot; → &quot;Fix the bug where <code>/users/:id</code> returns 500 when <code>id</code> is non-numeric. Reproduce first, then fix, then add a test.&quot;</li>
+<li><strong>Point to sources.</strong> Use <code>@</code> to mention the files you already know are relevant. Don't make Claude grep for them.</li>
+<li><strong>Reference existing patterns.</strong> &quot;Follow the pattern in <code>src/api/v2/handlers/</code> while trying to add this new feature.&quot; Concrete examples work as one-shot or few-shot examples beat abstract rules.</li>
+<li><strong>Describe the symptom and not your hypothesis.</strong> If you tell Claude &quot;the cache layer is broken&quot;, that's where it'll look, even if the bug is upstream. Tell it what <em>you observed</em>; let it diagnose.</li>
+</ol>
+<p>The corollary: if you're prompting like ChatGPT (&quot;write a function that does X&quot;), you're leaving most of the value on the table. Claude Code's edge is that it can read context. Give it some!</p>
+<hr>
+<h2 id="4-the-inner-loop-permissions-and-modes" tabindex="-1">4. The inner loop: permissions and modes</h2>
+<p>The first wall most people hit: every action prompts for permission. After ten minutes you want to throw your laptop. There's a ladder out there, and you need to learn it.</p>
+<h3 id="the-permissions-ladder" tabindex="-1">The permissions ladder</h3>
+<p>In order of increasing trust:</p>
+<h4 id="1-default-asks-before-every-writeexec" tabindex="-1">1. Default (asks before every write/exec)</h4>
+<p>You see this on day one. Every edit, every shell command, a permission prompt.</p>
+<p><img src="./assets/permission-to-rm.png" alt="permission-to-rm"></p>
+<p>Use this when you don't yet trust the session or the task is sensitive.</p>
+<h4 id="2-plan-mode-shifttab-twice-to-toggle-or-start-with-plan" tabindex="-1">2. Plan mode (Shift+Tab twice to toggle, or start with <code>/plan</code>)</h4>
+<p>In this mode, Claude Code can only read and explore. It cannot edit, write, or execute. Instead, it produces a plan in a file you can review, usually at <code>~/.claude/plans/&lt;slug&gt;.md</code>.</p>
+<p><img src="./assets/plan-mode.png" alt="plan-mode"></p>
+<p>Use plan mode when you're entering an unfamiliar codebase or about to make a non-trivial change. It's the same workflow real engineers use: explore first, plan, then execute, but in a more structured way.</p>
+<p>I am a big fan of plan mode, and when I have to carry out tasks that are not trivial and require some levels of chain of thought or a sequence of steps due to their complexity, I always use plan mode.</p>
+<h4 id="3-acceptedits-cycle-with-shifttab" tabindex="-1">3. acceptEdits (cycle with Shift+Tab)</h4>
+<p>Auto-approves file edits and safe filesystem ops (<code>mkdir</code>, <code>touch</code>, <code>mv</code>, <code>cp</code> to safe paths). Doesn't auto-approve arbitrary shell commands.</p>
+<p><img src="./assets/acceptedits.png" alt="acceptedits"></p>
+<blockquote>
+<p>Even in acceptEdits mode, protected paths (<code>.git</code>, <code>.claude</code>, dotfiles, your home directory itself) are still guarded. acceptEdits is &quot;trust the diff&quot;, not &quot;trust everything&quot;.</p>
+</blockquote>
+<p>Use this when you're paying attention, looking at each diff as it lands, but don't want to click <code>Approve</code> forty times.</p>
+<h4 id="4-auto-mode-claude-permission-mode-auto" tabindex="-1">4. Auto mode (<code>claude --permission-mode auto</code>)</h4>
+<p>Newer, and worth knowing about. Apparently, this is a small classifier model that gates Bash and MCP calls. It blocks scope escalation, unknown infrastructure, hostile-looking content, and lets through what looks routine. If the classifier blocks three times in a row, it falls back to prompting you. Requires Sonnet 4.6 or newer and a Max/Team/Enterprise plan.</p>
+<p>As of May 21, 2026, this mode is not available to the Pro plan users, but <a href="https://claude.com/blog/auto-mode">Anthropic had claimed on its blog on March 24</a> that it would come to the Enterprise plan and API users &quot;in the coming days&quot;. Not sure when it will be available. But just wanted to highlight it here since it will hopefully be available soon.</p>
+<h4 id="5-bypasspermissions-dangerously-skip-permissions" tabindex="-1">5. bypassPermissions / <code>--dangerously-skip-permissions</code></h4>
+<p>Zero checks. Full speed. Nothing is asked.</p>
+<blockquote>
+<p><strong>Do not use this yet.</strong> We come back in <a href="#9-guardrails-hooks">section 9</a> with hooks. Once you have those, <code>--dangerously-skip-permissions</code> is a deliberate choice.</p>
+</blockquote>
+<h3 id="permissions-allowlists" tabindex="-1"><code>/permissions</code> allowlists</h3>
+<p>You can pin specific commands as always-allowed. Inside a session:</p>
+<pre><code>/permissions allow Bash(npm run lint)
+/permissions allow Bash(pytest *)
+</code></pre>
+<p>Now those particular commands run without prompting, even in default mode. This is how you keep the prompts where they matter: destructive commands stay gated, the safe stuff stops nagging.</p>
+<p><code>/permissions list</code> shows what's currently allowed. <code>/permissions deny &lt;rule&gt;</code> removes one.</p>
+<h3 id="what-model-should-i-use" tabindex="-1">What model should I use?</h3>
+<p>Usually, I just used the latest Opus model for most tasks, but use Sonnet for planning. If the tasks are well-planned and you are confident about the steps, you can use Sonnet for the entire task. Opus is clearly the better model, but Sonnet is also not bad! Just go to <code>/model</code> and switch to the model you want to use. I do not usually recommend Haiku, but if you're genuinely running out of the 5-hour / weekly token usage limit, you can use it. But I'd just wait.</p>
+<p>Additionally, as of May 21, 2026, you can set the model's effort from low to max. The higher the effort, the more time the model will spend on detailed reasoning and analysis. I often think the <code>max</code> effort consumes too much tokens for diminishing returns, and often find <code>high</code> or <code>xhigh</code> to be perfectly good levels.</p>
+<hr>
+<h2 id="5-resuming-sessions" tabindex="-1">5. Resuming sessions</h2>
+<p>Day-old debugging sessions, multi-day features, half-done refactors: you don't have to re-explain anything. Claude Code persists sessions automatically.</p>
+<h3 id="the-resume-flags" tabindex="-1">The resume flags</h3>
+<pre><code class="language-bash">claude --continue           # or `claude -c` --- pick up the most recent session in this dir
+claude --resume             # interactive picker across all sessions
+claude --resume my-oauth    # jump to a named session
+</code></pre>
+<p><img src="./assets/claude-resume.png" alt="claude-resume"></p>
+<h3 id="naming-sessions" tabindex="-1">Naming sessions</h3>
+<p>Inside a session:</p>
+<pre><code>/rename my-oauth-refactor
+</code></pre>
+<p>A name is much easier to find later than &quot;ff347a49-e961-444f-9dae-28553602ead5&quot;.
+Rename anything you might want to come back to.</p>
+<h3 id="checkpoints-and-rewind" tabindex="-1">Checkpoints and <code>/rewind</code></h3>
+<p>Claude Code auto-creates a checkpoint before each change. To roll back:</p>
+<ul>
+<li><code>Esc Esc</code> --- opens the rewind menu.</li>
+<li><code>/rewind</code> --- same menu via slash command.</li>
+</ul>
+<p><img src="./assets/rewind1.png" alt="rewind1"></p>
+<p>+</p>
+<p><img src="./assets/rewind2.png" alt="rewind2"></p>
+<p>You can rewind:</p>
+<ul>
+<li><strong>Conversation only</strong>: keep the file edits, undo the chat history. Useful for &quot;let me re-ask that better&quot;.</li>
+<li><strong>Code only</strong>: keep talking, undo the disk changes.</li>
+<li><strong>Both</strong>: a full time-machine to that turn.</li>
+<li><strong>&quot;Summarize from here&quot;</strong> or <strong>&quot;summarize up to here&quot;</strong>: partial compaction (more on this in <a href="#6-context-piling-up-compacting-clearing">section 6</a>).</li>
+</ul>
+<blockquote>
+<p>Checkpoints track Claude's edits and not external processes. If a long-running build wrote files, those aren't reverted. Please do NOT treat <code>/rewind</code> as a git replacement. Git is very important, and I recommend you ALWAYS use it to track your changes.</p>
+</blockquote>
+<h3 id="teleporting" tabindex="-1">Teleporting</h3>
+<p>If you started a session in the web app or desktop app and want to finish it in the terminal, <code>claude --teleport</code> moves it over. Handy for hybrid workflows: start the session on your phone, finish on your laptop.</p>
+<hr>
+<h2 id="6-context-piling-up-compacting-clearing" tabindex="-1">6. Context: piling up, compacting, clearing</h2>
+<p>Every file Claude reads, every command it runs, every output it sees, all of it goes into the context window. Long sessions get slow, expensive, and increasingly weird (the model starts forgetting what you said two hours ago).</p>
+<p>You have four tools to manage this. Use the right one.</p>
+<h3 id="compact-in-place-summary" tabindex="-1"><code>/compact</code> : in-place summary</h3>
+<pre><code>/compact
+</code></pre>
+<p>Claude summarizes the current session in place, keeping the gist and dropping the detail. The conversation continues from the summary.</p>
+<p><img src="./assets/compact.png" alt="compact"></p>
+<p>You can pass instructions:</p>
+<pre><code>/compact preserve the test failures and the chosen API design
+</code></pre>
+<p>The summary will keep what you asked it to keep. This is the single most underused command in Claude Code. Please run it between major phases of a long task.</p>
+<h3 id="clear-start-fresh-same-repo" tabindex="-1"><code>/clear</code> : start fresh, same repo</h3>
+<pre><code>/clear
+</code></pre>
+<p>Wipes the conversation. CLAUDE.md still loads. Use this when you finish one task and want to start a different one in the same project. Boris Cherny's <a href="https://howborisusesclaudecode.com/">advice</a> is to <code>/clear</code> aggressively --- you'll be amazed how much faster the next task feels.</p>
+<h3 id="rewind-summarize-from-here-partial-compact" tabindex="-1"><code>/rewind</code> &quot;summarize from here&quot; : partial compact</h3>
+<p>We saw this in §5. It's another knob: keep the recent turns intact, summarize the older ones. Best when you've just made progress and don't want to lose detail on the last bit, but the early exploration can go.</p>
+<h3 id="btw-the-side-question" tabindex="-1"><code>/btw</code> : the side question</h3>
+<pre><code>/btw what's the difference between Sonnet and Opus?
+</code></pre>
+<p><code>/btw</code> opens a dismissible overlay. Your question and Claude's answer don't enter the conversation history. Use this for context you want now and don't want polluting the session later.</p>
+<p><img src="./assets/btw.png" alt="btw"></p>
+<h3 id="quitting-and-starting-fresh" tabindex="-1">Quitting and starting fresh</h3>
+<p>The nuclear option. Quit Claude Code (<code>Ctrl+C</code> twice, or <code>/exit</code>) and start a new session. Use when the previous session got stuck, confused, or you've corrected Claude on the same thing three times.</p>
+<h3 id="the-rule-of-thumb" tabindex="-1">The rule of thumb</h3>
+<p><strong>One session, one goal.</strong> Bug fix and refactor and doc rewrite is three sessions, not one. Boris, the creator of Claude Code, calls the alternative the &quot;kitchen sink session&quot;: everything gets dumped into one conversation, context bloats, quality degrades. <code>/clear</code> is free.</p>
+<p>You can also tell Claude how to compact via CLAUDE.md:</p>
+<pre><code class="language-markdown">## On compaction
+
+When compacting, always preserve:
+- the chosen API contract
+- any test failures we've seen
+- any decisions we explicitly made
+</code></pre>
+<p>Auto-compaction kicks in near the context limit, but proactive <code>/compact</code> is cheaper and the result is better-tailored.</p>
+<hr>
+<h2 id="7-skills-discovering-installing-using" tabindex="-1">7. Skills: discovering, installing, using</h2>
+<p>A skill is a packaged instruction set you can invoke with <code>/skill-name</code>. Think of it as a reusable prompt with optional tool restrictions --- &quot;the way I want Claude to do X&quot; baked into one slash command.</p>
+<h3 id="skills" tabindex="-1"><code>/skills</code></h3>
+<p>In a session, type:</p>
+<pre><code>/skills
+</code></pre>
+<p><img src="./assets/skills.png" alt="skills"></p>
+<p>You see what's currently loaded: both user-level (from <code>~/.claude/skills/</code>) and project-level (from <code>./.claude/skills/</code>).</p>
+<p>A fresh install has none. Let's install some.</p>
+<h3 id="plugin-and-the-marketplace" tabindex="-1"><code>/plugin</code> and the marketplace</h3>
+<pre><code>/plugin
+</code></pre>
+<p><img src="./assets/plugins.png" alt="plugins"></p>
+<p>A plugin bundles one or more skills (plus optional hooks and MCP servers) into one installable unit. The official Anthropic marketplace, <code>claude-plugins-official</code>, is the place to start.</p>
+<p>If it's not already there:</p>
+<ol>
+<li><code>/plugin</code> → <strong>Tab to &quot;Marketplace&quot;</strong> → <strong>Add marketplace</strong>.</li>
+<li>Paste the marketplace GitHub repository identifier: <code>anthropics/claude-plugins-official</code>.</li>
+<li>Confirm.</li>
+</ol>
+<p><img src="./assets/plugins-marketplaces.png" alt="plugins-marketplace"></p>
+<p>Now browse. Install a useful starter pack (you can install a plugin at the user level or project level; I usually install plugins at the user level so that they are available in every project):</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frontend-design</code></td>
+<td>Create distinctive, production-grade frontend interfaces with high design quality.</td>
+</tr>
+<tr>
+<td><code>skill-creator</code></td>
+<td>Build a new skill with you or improve an existing skill you created. The meta-skill.</td>
+</tr>
+</tbody>
+</table>
+<p>You can confirm whether these plugins are installed by going to the <strong>Installed</strong> tab inside <code>/plugin</code>.</p>
+<p><img src="./assets/installed-plugins.png" alt="installed-plugins"></p>
+<h3 id="invoking-skills" tabindex="-1">Invoking skills</h3>
+<p>Two patterns, both work:</p>
+<p><strong>Leading.</strong> Skill at the start of the prompt:</p>
+<pre><code>/frontend-design look at @src/cute/blackwell_helpers.py and design a modern and clean HTML UI for me to visualize this code intuitively.
+</code></pre>
+<p><strong>Mid-prompt.</strong> Skill embedded in a larger instruction:</p>
+<pre><code>fix the failing test in @examples/inference/test_blackwell_helpers.py, then /code-simplifier the result.
+</code></pre>
+<p>Mid-prompt invocations work because skills are mounted as tools Claude can call; you're cueing it to use the tool, not running a separate command.</p>
+<h3 id="three-demos" tabindex="-1">Three demos</h3>
+<p><strong>Demo 1: <code>/frontend-design</code> on a codebase with complex logic.</strong></p>
+<p>Suppose I want to visualize the code in <a href="https://github.com/Dao-AILab/flash-attention/blob/main/flash_attn/cute/flash_fwd.py">src/cute/flash_fwd.py</a> since it's getting too complex for me.</p>
+<pre><code>look at @src/cute/flash_fwd.py and design a modern and clean HTML UI for me to visualize this code intuitively.
+</code></pre>
+<p><img src="./assets/frontend-design-skill.png" alt="frontend-design-skill"></p>
+<p>Here's what Opus 4.7 with xhigh effort and the <code>frontend-design</code> skill generated with just a single prompt.</p>
+<p><img src="./assets/frontend-design-result.png" alt="frontend-design-result"></p>
+<p>Not a bad first iteration I think! Pretty interactive as well; I could learn from this.</p>
+<p><strong>Demo 2: <code>/frontend-design</code> to further improve the UI.</strong></p>
+<p>Suppose I want to further improve the UI. I can ask Claude to do so with the <code>frontend-design</code> skill again:</p>
+<pre><code>please help me improve this ui further for this file. pasting the screenshot here to show you how it looks: [Image #1]. this is genuinely good, but the text could be a bit more legible, perhaps? continue to use the /frontend-design skill
+</code></pre>
+<p><img src="./assets/frontend-design-2nd-prompt.png" alt="frontend-design-2nd-prompt"></p>
+<p>Which gives me:</p>
+<p><img src="./assets/frontend-design-2nd-result.png" alt="frontend-design-2nd-result"></p>
+<p>Unfortunately, this still kind of looks just like the result from the first prompt. I should've been a bit more specific about the changes I want to make. You can continue to do it and improve it further.</p>
+<hr>
+<h2 id="8-creating-your-own-skills" tabindex="-1">8. Creating your own skills</h2>
+<p>The thing that makes skills go from &quot;useful&quot; to &quot;core to your workflow&quot; is that they're trivial to build. A skill is <strong>a directory with a <code>SKILL.md</code> file</strong>. That's it.</p>
+<h3 id="anatomy-of-a-skillmd" tabindex="-1">Anatomy of a SKILL.md</h3>
+<pre><code class="language-markdown">---
+name: commit
+description: Commit current work with a properly formatted message. Triggers on &quot;commit&quot;, &quot;save&quot;, &quot;checkpoint&quot;.
+allowed-tools: Read, Grep, Bash
+disable-model-invocation: false
+---
+
+# Commit
+
+[the body - whatever instructions Claude should follow when this skill is invoked]
+</code></pre>
+<p>Frontmatter fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>The slash-command name. <code>/commit</code>. Must match the directory name.</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>One-line summary. Shows up in <code>/skills</code>. Claude also uses this to decide whether to invoke the skill autonomously.</td>
+</tr>
+<tr>
+<td><code>allowed-tools</code></td>
+<td>Optional. Restrict which tools the skill can use. Useful for skills that should only read, not write.</td>
+</tr>
+<tr>
+<td><code>disable-model-invocation</code></td>
+<td>If <code>true</code>, Claude won't invoke this skill on its own - only you can trigger it via <code>/name</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="where-skills-live" tabindex="-1">Where skills live</h3>
+<p>Two locations:</p>
+<ul>
+<li><strong>User-level.</strong> <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code> - available in every project.</li>
+<li><strong>Project-level.</strong> <code>&lt;repo&gt;/.claude/skills/&lt;name&gt;/SKILL.md</code> - only in this repo, shared via git.</li>
+</ul>
+<p>Pick user-level for personal workflows. Pick project-level for things that depend on the repository's conventions.</p>
+<h3 id="three-live-builds" tabindex="-1">Three live builds</h3>
+<p>I have a <a href="https://github.com/sumitdotml">skills + hooks kit</a> you can clone, but it's instructive to write a few from scratch.</p>
+<h4 id="first-skill-commit-user-level" tabindex="-1"><code>first-skill-commit</code> (user-level)</h4>
+<p>Ported from <a href="https://github.com/sumitdotml/skills/blob/main/skills/commit/SKILL.md">sumit/skills</a>. Conventions: lowercase, past tense, &lt; 80 chars.</p>
+<pre><code class="language-bash">mkdir -p ~/.claude/skills/first-skill-commit
+touch ~/.claude/skills/first-skill-commit/SKILL.md
+</code></pre>
+<p>Paste this into the <code>SKILL.md</code> file that you just created:</p>
+<pre><code class="language-markdown">---
+name: first-skill-commit
+description: Commit current work with properly formatted messages. Use when the user asks to commit, save progress, or checkpoint their work.
+---
+
+Commit current work to git with properly formatted messages.
+
+## Commit Message Format
+
+- First letter lowercase
+- First word past tense (&quot;added&quot;, &quot;updated&quot;, &quot;fixed&quot;, &quot;removed&quot;)
+- Proper nouns/acronyms capitalized as needed
+- &lt; 80 chars single line, unless explicitly asked for multi-line
+
+Examples:
+- `added dataset verification script`
+- `fixed gradient flow in MoE router`
+- `updated readme with setup instructions`
+
+## Instructions
+
+1. Run `GIT_EDITOR=true git status` to see what changed
+2. Run `GIT_EDITOR=true git diff &lt;file&gt;` for each modified file
+3. Group related changes into logical commits
+4. Stage only related files - don't use `git add -A`
+5. After committing, if not on main, ask if user wants to push
+
+## Important
+
+- Prepend `GIT_EDITOR=true` to git commands to avoid blocking
+- Only commit when instructed - don't auto-commit subsequent work
+- Avoid verbosity - keep messages concise
+</code></pre>
+<p>Now in any repo, you can run <code>/first-skill-commit</code> to produce correctly-formatted commits without you ever explaining the rules again.</p>
+<h4 id="second-skill-coding-principles-lets-keep-this-one-at-the-user-level-for-now-since-its-a-behavioral-skill" tabindex="-1"><code>second-skill-coding-principles</code> (let's keep this one at the user-level for now, since it's a behavioral skill)</h4>
+<p>Behavioral skills don't invoke tools, but they shape <em>how</em> Claude codes. Same shape, different body. Create a new file called <code>SKILL.md</code> in the <code>~/.claude/skills/second-skill-coding-principles/</code> directory:</p>
+<pre><code class="language-bash">mkdir -p ~/.claude/skills/second-skill-coding-principles
+touch ~/.claude/skills/second-skill-coding-principles/SKILL.md
+</code></pre>
+<p>and paste the following content into the <code>SKILL.md</code> file that you just created:</p>
+<pre><code class="language-markdown">---
+name: second-skill-coding-principles
+description: Behavioral guidelines to reduce common LLM coding mistakes. Load this when writing or modifying code to avoid overengineering and unnecessary changes.
+user-invocable: true
+---
+
+# Coding Principles
+
+## 1. Think Before Coding
+State assumptions explicitly. If uncertain, ask. If multiple interpretations exist, present them.
+
+## 2. Simplicity First
+Minimum code that solves the problem. No abstractions for single-use code. No &quot;flexibility&quot; that wasn't requested.
+
+## 3. Surgical Changes
+Touch only what you must. Don't refactor unrelated code. Match existing style.
+
+## 4. Goal-Driven Execution
+Define success criteria. Loop until verified. &quot;Fix the bug&quot; → &quot;Write a failing test, then make it pass&quot;.
+
+## 5. Minimal Comments
+Code should be self-documenting. Comments explain why, not what.
+
+## 6. Avoid AI Slop
+Before committing, scan your diff for type-casts-to-any, defensive fallbacks, redundant comments. Remove them.
+</code></pre>
+<p>Now in any repo, you can run <code>/second-skill-coding-principles</code> to code more like you'd want.</p>
+<blockquote>
+<p>You can always delete these two skills later if you want to, since they are just for demonstration purposes. You can also delete the directories themselves if you want to.</p>
+</blockquote>
+<h3 id="the-meta-skill-skill-creator" tabindex="-1">The meta-skill: <code>/skill-creator</code></h3>
+<p>If you installed <code>claude-plugins-official</code> in <a href="#7-skills-discovering-installing-using">section 7</a>, you have <code>/skill-creator</code>. It walks you through building a new skill interactively - asks what it should do, what tools it needs, drafts the SKILL.md, places it. Worth using once just to see the shape.</p>
+<blockquote>
+<p>Most of my workflow improvements over the last six months have been &quot;noticed I was repeating myself in prompts → wrote a skill&quot;. The leverage compounds.</p>
+</blockquote>
+<p>The kit at <a href="https://github.com/sumitdotml/skills">sumit/skills</a> bundles the skills shown here plus a few more (<code>writing-style</code>, <code>mistake-memory-guardrails</code>, <code>model-debate</code>, <code>screenshot-naming</code>, <code>daily-shutdown</code>). You can clone it, run <code>./install.sh</code>, and you've got a starter set.</p>
+<blockquote>
+<p>Note that it also installs <code>CLAUDE.md</code> for you with the appropriate guardrails and a few hooks. You may also notice that it adds <code>AGENTS.md</code> and <code>.agents</code> directory, but these have the same content as our <code>.claude</code> and <code>CLAUDE.md</code> (they are symbolic links to the same files). Whatever we change in <code>.claude</code>, we change in <code>.agents</code> and vice versa, so you don't really need to worry about anything. I did this mainly because I also use Codex and occasionally OpenCode, and this ensures I can use the same <code>.claude</code> and <code>CLAUDE.md</code> for everything.</p>
+</blockquote>
+<hr>
+<h2 id="9-guardrails-hooks" tabindex="-1">9. Guardrails: hooks</h2>
+<p>A <strong>hook</strong> is a script that the Claude Code harness runs at a specific lifecycle event. No matter how many &quot;DO NOT DO THIS&quot; you add to your prompts or CLAUDE.md, sometimes the model will still do it. Hooks, however, simply live a layer above the actual model activity and since these are just scripts that trigger based on events, they are very deterministic. The most useful event by far is <code>PreToolUse</code>, which runs <em>before</em> Claude executes a tool call, with the call as JSON on stdin. If the hook exits with code <code>2</code>, the tool call is blocked.</p>
+<h3 id="lifecycle-events" tabindex="-1">Lifecycle events</h3>
+<p>The ones you'll care about are:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>When it fires</th>
+<th>Common use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PreToolUse</code></td>
+<td>Before every tool call.</td>
+<td>Block dangerous commands, enforce path restrictions.</td>
+</tr>
+<tr>
+<td><code>PostToolUse</code></td>
+<td>After every tool call.</td>
+<td>Auto-format, log, lint.</td>
+</tr>
+<tr>
+<td><code>UserPromptSubmit</code></td>
+<td>When the user submits a prompt.</td>
+<td>Inject context, rewrite prompts.</td>
+</tr>
+<tr>
+<td><code>SessionStart</code> / <code>SessionEnd</code></td>
+<td>Session boundaries.</td>
+<td>Logging, telemetry.</td>
+</tr>
+<tr>
+<td><code>Stop</code> / <code>StopFailure</code></td>
+<td>When a turn ends.</td>
+<td>Status reporting, notifications.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="settingsjson" tabindex="-1">Settings.json</h3>
+<p>Hooks live in <code>.claude/settings.json</code> (project) or <code>~/.claude/settings.json</code> (user). Shape is usually something like this:</p>
+<pre><code class="language-json">{
+  &quot;hooks&quot;: {
+    &quot;PreToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Bash&quot;,
+        &quot;hooks&quot;: [
+          { &quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;$CLAUDE_PROJECT_DIR/.claude/hooks/block-dangerous-git.sh&quot; }
+        ]
+      }
+    ]
+  }
+}
+</code></pre>
+<p><code>matcher</code> picks which tools the hook fires on. <code>Bash</code>, <code>Edit</code>, <code>Write</code>, or a pipe-separated list like <code>Edit|Write|MultiEdit</code>.</p>
+<h3 id="two-hook-walkthroughs" tabindex="-1">Two hook walkthroughs</h3>
+<h4 id="block-dangerous-gitsh-pretooluse-bash" tabindex="-1"><code>block-dangerous-git.sh</code> (PreToolUse, Bash)</h4>
+<p>The whole script is as follows; however, if you've installed the <a href="#the-meta-skill-skill-creator">skills + hooks kit</a>, you already have a <code>block-dangerous-git.sh</code> file in the <code>.claude/hooks/</code> directory.</p>
+<pre><code class="language-bash">#!/bin/bash
+INPUT=$(cat)
+COMMAND=$(echo &quot;$INPUT&quot; | jq -r '.tool_input.command')
+
+DANGEROUS_PATTERNS=(
+  &quot;git push&quot;
+  &quot;git reset --hard&quot;
+  &quot;git clean -fd&quot;
+  &quot;git clean -f&quot;
+  &quot;git branch -D&quot;
+  &quot;git checkout \.&quot;
+  &quot;git restore \.&quot;
+  &quot;push --force&quot;
+  &quot;reset --hard&quot;
+)
+
+for pattern in &quot;${DANGEROUS_PATTERNS[@]}&quot;; do
+  if echo &quot;$COMMAND&quot; | grep -qE &quot;$pattern&quot;; then
+    echo &quot;BLOCKED: '$COMMAND' matches dangerous pattern '$pattern'. The user has prevented you from doing this.&quot; &gt;&amp;2
+    exit 2
+  fi
+done
+
+exit 0
+</code></pre>
+<p><img src="./assets/hook-blocking-git-push.png" alt="hook-blocking-git-push"></p>
+<p>The pattern: read JSON on stdin, extract the command, match against a list, exit <code>2</code> to block. The error message goes to stderr and Claude sees it, so it knows <em>why</em> it was blocked and can adapt.</p>
+<h4 id="block-pipsh-pretooluse-bash" tabindex="-1"><code>block-pip.sh</code> (PreToolUse, Bash)</h4>
+<p>Same shape, narrower scope. Just as an example, if you use <code>uv</code> and never want pip:</p>
+<pre><code class="language-bash">#!/bin/bash
+INPUT=$(cat)
+COMMAND=$(echo &quot;$INPUT&quot; | jq -r '.tool_input.command')
+
+if echo &quot;$COMMAND&quot; | grep -qE '(^|;|&amp;&amp;|\|\||\|)\s*pip[0-9]?\s' || echo &quot;$COMMAND&quot; | grep -qE 'python[0-9.]* -m pip\s'; then
+  echo &quot;BLOCKED: pip is not allowed. Use 'uv' instead (e.g. 'uv add', 'uv sync', 'uv run'). No venv activation needed.&quot; &gt;&amp;2
+  exit 2
+fi
+
+exit 0
+</code></pre>
+<p>Here, the block message tells Claude <em>what to do instead</em>. Soft-block with a redirect is much more useful than a hard wall.</p>
+<h3 id="blocking-sensitive-reads-with-permissionsdeny" tabindex="-1">Blocking sensitive reads with <code>permissions.deny</code></h3>
+<p>Hooks aren't the only guardrail, and they aren't even the simplest one. The lowest-effort thing you can install is a <code>permissions.deny</code> block in your <code>settings.json</code>, which means you sometimes don't need to write any script, no <code>jq</code>, and can be done with just a few lines of JSON:</p>
+<pre><code class="language-json">{
+  &quot;permissions&quot;: {
+    &quot;deny&quot;: [
+      &quot;Read(./.env)&quot;,
+      &quot;Read(./.env.*)&quot;,
+      &quot;Read(./secrets/**)&quot;
+    ]
+  }
+}
+</code></pre>
+<p>This tells the Claude Code harness: never let any tool read these paths. Claude doesn't have to be polite about it either since the harness refuses the call before the model sees the contents. Please extend this list to your taste (the following is my personal list):</p>
+<pre><code class="language-json">&quot;deny&quot;: [
+  &quot;Read(./.env)&quot;,
+  &quot;Read(./.env.*)&quot;,
+  &quot;Read(./secrets/**)&quot;,
+  &quot;Read(./id_rsa)&quot;,
+  &quot;Read(~/.aws/credentials)&quot;,
+  &quot;Read(~/.ssh/**)&quot;,
+  &quot;Read(./config/*.production.yml)&quot;
+]
+</code></pre>
+<p>I have done this at the user level in my <code>~/.claude/settings.json</code> file that you can find <a href="https://raw.githubusercontent.com/sumitdotml/dotfiles/refs/heads/main/cc/settings.json">here</a>.</p>
+<p>You can also add it to your project-level <code>settings.json</code> file if you want to be more specific about the paths you want to block for a given project.</p>
+<p>The <code>Read(...)</code> matcher uses the standard permission-rule syntax, so globs work and you can target absolute, home-relative, or project-relative paths.</p>
+<p>Like other settings, deny rules can live at either scope:</p>
+<ul>
+<li><code>.claude/settings.json</code>: project-level, committed to git. Prefer this for repo-specific secrets paths so collaborators get the same protection.</li>
+<li><code>~/.claude/settings.json</code>: user-level, applies everywhere. Prefer this for things you never want <em>any</em> session to read, like <code>~/.aws/credentials</code> or <code>~/.ssh/</code>.</li>
+</ul>
+<p>You can confirm the rules are loaded by running <code>/permissions</code> inside a session and scrolling to the deny list.</p>
+<h3 id="tying-it-together" tabindex="-1">Tying it together</h3>
+<p>Two hooks (about thirty lines each) plus a handful of <code>permissions.deny</code> rules buys you a meaningful safety floor:</p>
+<ul>
+<li>Destructive git operations: blocked.</li>
+<li>Pip usage: blocked, with a redirect to <code>uv</code>.</li>
+<li>Secrets and dotfiles: unreadable.</li>
+</ul>
+<p>This is <strong>not</strong> a license to run <code>--dangerously-skip-permissions</code> blindly, since the flag is still dangerous, hooks or not. The next section gets into sandboxes (a stronger OS-level guarantee) and into the honest answer of when, if ever, the bypass flag is reasonable to reach for.</p>
+<hr>
+<h2 id="10-sandboxes" tabindex="-1">10. Sandboxes</h2>
+<p><code>/sandbox</code> is Claude Code's OS-level isolation. It launched as a research preview in November 2025 and is generally available now. The one-sentence pitch: it puts a wall around what Bash commands can read, write, and reach over the network. The official docs live at <a href="https://docs.claude.com/en/docs/claude-code/sandboxing">docs.claude.com/en/docs/claude-code/sandboxing</a>, which is worth a read if you're going to lean on it.</p>
+<p>A piece of honesty upfront: I oversold this in an earlier draft of the post. A sandbox is <strong>not</strong> a license to slap <code>--dangerously-skip-permissions</code> on and walk away. It's a strong isolation layer for one thing (Bash), and you should treat it that way.</p>
+<h3 id="what-it-actually-isolates" tabindex="-1">What it actually isolates</h3>
+<p>Two layers:</p>
+<ul>
+<li><strong>Filesystem.</strong> By default, Bash subprocesses can read and write only inside your current working directory and its subdirs. Reads of arbitrary paths outside the project are blocked. You can selectively widen via <code>sandbox.filesystem.allowWrite</code> / <code>allowRead</code>, and tighten via <code>denyRead</code> / <code>denyWrite</code>. Enforcement is at the OS level (Seatbelt on macOS, bubblewrap on Linux), so it applies to <em>every</em> subprocess - <code>kubectl</code>, <code>terraform</code>, <code>npm install</code>, your test runner, all of it.</li>
+<li><strong>Network.</strong> Network calls from inside the sandbox go through a proxy that only allows pre-approved domains. Requests to a new domain trigger a permission prompt, or are silently denied if you set <code>allowManagedDomainsOnly: true</code> in your <code>settings.json</code> file.</li>
+</ul>
+<p>What it does <strong>not</strong> sandbox:</p>
+<ul>
+<li>The <code>Edit</code>, <code>Write</code>, <code>Read</code>, <code>WebFetch</code>, and MCP tools. Those still go through Claude Code's normal permission flow (and through the <code>permissions.deny</code> rules from §9).</li>
+<li>TLS-inspected traffic. The proxy gates by hostname; it does not terminate TLS. Creative attacker code could in theory tunnel through an allowed domain.</li>
+</ul>
+<p>So: <code>/sandbox</code> is a strong wall around Bash subprocesses. It doesn't replace the rest of your guardrails.</p>
+<h3 id="modes" tabindex="-1">Modes</h3>
+<p>Two modes. Toggle with <code>/sandbox</code>, or set <code>sandbox.mode</code> in <code>settings.json</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Auto-allow</strong></td>
+<td>Sandboxed Bash commands run <em>without</em> permission prompts. Commands that hit a sandbox restriction fall back to the normal permission flow. Commands targeting <code>/</code>, <code>~</code>, or other critical paths still prompt.</td>
+</tr>
+<tr>
+<td><strong>Regular permissions</strong></td>
+<td>Bash commands still prompt the way they normally would. The sandbox is layered <em>underneath</em> the permission flow. More friction, more control.</td>
+</tr>
+</tbody>
+</table>
+<p>Auto-allow is the one most people want. It's the closest you'll get to &quot;no prompts&quot; while keeping a real safety boundary in place.</p>
+<h3 id="config" tabindex="-1">Config</h3>
+<p>Same <code>settings.json</code> file, new top-level block:</p>
+<pre><code class="language-json">{
+  &quot;sandbox&quot;: {
+    &quot;enabled&quot;: true,
+    &quot;mode&quot;: &quot;auto-allow&quot;,
+    &quot;filesystem&quot;: {
+      &quot;allowWrite&quot;: [&quot;~/.npm&quot;, &quot;/tmp/build&quot;],
+      &quot;denyRead&quot;:  [&quot;~/.ssh&quot;, &quot;~/.aws&quot;]
+    },
+    &quot;network&quot;: {
+      &quot;allowedDomains&quot;: [&quot;github.com&quot;, &quot;registry.npmjs.org&quot;, &quot;pypi.org&quot;]
+    },
+    &quot;excludedCommands&quot;: [&quot;docker&quot;, &quot;watchman&quot;],
+    &quot;allowUnsandboxedCommands&quot;: true
+  }
+}
+</code></pre>
+<p>A few notes from the docs worth knowing:</p>
+<ul>
+<li><code>excludedCommands</code> is the escape hatch for tools that genuinely can't run under the sandbox (Docker, Jest's <code>watchman</code>, anything launching Windows binaries from WSL2).</li>
+<li>Set <code>allowUnsandboxedCommands: false</code> to make it strict. Claude can't request a one-off bypass via the <code>dangerouslyDisableSandbox</code> Bash parameter.</li>
+<li>Settings arrays merge across scopes (user → project → local), so you can extend allowlists at the project level without redeclaring them.</li>
+</ul>
+<h3 id="platform-support" tabindex="-1">Platform support</h3>
+<ul>
+<li><strong>macOS</strong>: works out of the box, uses Seatbelt (<code>sandbox-exec</code>).</li>
+<li><strong>Linux</strong>: requires <code>bubblewrap</code> and <code>socat</code>. On Debian/Ubuntu: <code>sudo apt-get install bubblewrap socat</code>.</li>
+<li><strong>WSL2</strong>: same as Linux. Uses bubblewrap.</li>
+<li><strong>WSL1</strong>: unsupported (kernel namespaces missing).</li>
+<li><strong>Windows native</strong>: planned, not yet shipped as of v2.1.145.</li>
+<li><strong>Docker on Ubuntu 24.04+</strong>: needs an AppArmor profile that allows <code>bwrap</code> user namespaces.</li>
+</ul>
+<h3 id="about-dangerously-skip-permissions" tabindex="-1">About <code>--dangerously-skip-permissions</code></h3>
+<p>This is where I want to be careful, because the earlier framing in this post (and a lot of guides online) is overoptimistic.</p>
+<p>A well-configured sandbox plus <code>--dangerously-skip-permissions</code> is <em>less catastrophic</em> than <code>--dangerously-skip-permissions</code> on its own. That's the honest version. It is <strong>not</strong> the same as &quot;safe&quot;. Anthropic's <a href="https://www.anthropic.com/engineering/claude-code-sandboxing">engineering post on sandboxing</a> explicitly notes that effective isolation requires both filesystem <em>and</em> network restrictions, and that overly broad allowlists (e.g. permitting <code>github.com</code> for git) reopen exfiltration paths via domain fronting. The safer evolution they actually recommend is <a href="#4-the-inner-loop-permissions-and-modes">auto mode</a>: a classifier that gates Bash and MCP calls intelligently, not bypass-permissions behind a sandbox.</p>
+<p>So, please don't run <code>--dangerously-skip-permissions</code> casually. If you really want to:</p>
+<ul>
+<li>Run it with <code>/sandbox</code> on, and tighten the network allowlist to only what the task needs.</li>
+<li>Run it on a machine, container, or VM you can afford to lose.</li>
+<li><strong>Stay at the keyboard.</strong> Watch what Claude is doing. Be in an immediate position to <code>Ctrl+C</code> or quit the session. Claude Code instances genuinely do strange things sometimes; in this <a href="https://www.reddit.com/r/ClaudeAI/comments/1pgxckk/claude_cli_deleted_my_entire_home_directory_wiped/">December 2025 reddit post</a>, we can see that Claude Code ran <code>rm -rf</code> from <code>~/</code> and destroyed a user's filesystem. With a sandbox, the blast radius would have been the working directory. Without one, it ate the machine.</li>
+</ul>
+<p>Short version: <code>/sandbox</code> raises the floor, but <code>--dangerously-skip-permissions</code> lowers the ceiling. The combination is <em>less dangerous</em>, not <em>safe</em>. Auto mode (<a href="#4-the-inner-loop-permissions-and-modes">section 4</a>) is the better default for most people (a bit unfortunate that it's not available to the Pro plan users yet...).</p>
+<h3 id="worktrees-the-lightweight-alternative" tabindex="-1">Worktrees: the lightweight alternative</h3>
+<p>For parallel work where you want isolation <em>without</em> the sandbox setup, git worktrees are still the cheapest tool. Each worktree is a separate working directory from the same repo, with its own <code>.claude/</code>, its own session, its own permissions:</p>
+<pre><code class="language-bash">git worktree add ../myrepo-experiment feature-branch
+cd ../myrepo-experiment
+claude
+</code></pre>
+<p>Two worktrees + two <code>claude</code> sessions = two trains of thought, meaning there is no cross-contamination. This can be a cheap, lightweight, reversible (<code>git worktree remove</code>) way to isolate your work.</p>
+<p>I've personally tried using worktrees for a few projects and could not get myself to use it the way I wanted to. But perhaps some could find value in it.</p>
+<hr>
+<h2 id="11-truly-agentic-the-advanced-features" tabindex="-1">11. Truly agentic: the advanced features</h2>
+<h3 id="subagents" tabindex="-1">Subagents</h3>
+<p>A <strong>subagent</strong> is a Claude instance with its own context window, its own system prompt, and (usually) a restricted tool set. The main session can spawn one for a focused task. The subagent runs to completion, returns a summary, and disappears without polluting the main context.</p>
+<p>Three built-in agents come with every install:</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Explore</code></td>
+<td>Fast, read-only search. Use it to find files, grep for symbols, answer &quot;where is X defined?&quot;.</td>
+</tr>
+<tr>
+<td><code>Plan</code></td>
+<td>Designs implementation plans for non-trivial tasks. Returns a step-by-step plan + critical files.</td>
+</tr>
+<tr>
+<td><code>general-purpose</code></td>
+<td>The catch-all. Multi-step research, complex queries.</td>
+</tr>
+</tbody>
+</table>
+<p>You invoke them via the <code>Agent</code> tool from inside Claude Code, or via slash commands when configured. They run independently --- you can run several in parallel.</p>
+<p>You can also define <strong>custom subagents</strong>. Drop a file at <code>.claude/agents/&lt;name&gt;.md</code>:</p>
+<pre><code class="language-markdown">---
+name: security-reviewer
+description: Reviews code changes for security vulnerabilities.
+tools: Read, Grep, Glob, Bash
+model: opus
+---
+
+You are a security engineer. Review code changes for:
+- Authentication and authorization flaws
+- Injection vectors (SQL, command, XSS)
+- Secrets in code or configs
+- Insecure crypto usage
+
+Output: a short list of findings, each with severity (high/medium/low),
+file:line reference, and a one-sentence fix suggestion.
+</code></pre>
+<p>Now Claude can spawn <code>security-reviewer</code> for any PR review. Subagents are the most underrated lever in Claude Code --- the main reason is that nobody bothers to define custom ones. Define two or three of your own.</p>
+<h3 id="agent-teams" tabindex="-1">Agent teams</h3>
+<p>A coordinator agent that delegates to multiple subagents and merges their results. Think &quot;lead engineer assigning sub-tasks&quot;, but the coordinator is a Claude session and the subordinates are too. Useful for parallelizable work - a code review that wants security, performance, <em>and</em> style passes, for example.</p>
+<h3 id="routines-schedule" tabindex="-1">Routines (<code>/schedule</code>)</h3>
+<p><code>/schedule</code> creates a cron-like routine that runs on Anthropic's infrastructure, not your machine. Survives terminal close, machine restart, anything. Example uses:</p>
+<ul>
+<li>Every weekday at 9am, check for stale PRs and post a Slack reminder.</li>
+<li>Every Monday, summarize last week's commits.</li>
+<li>Every hour during a deploy, check the health endpoint and alert on regressions.</li>
+</ul>
+<p><code>[Screenshot: /schedule creating a &quot;stale-prs-daily&quot; routine with cron expression &quot;0 9 * * 1-5&quot;]</code></p>
+<p>Routines are visible at <a href="https://claude.ai/code">claude.ai/code</a>, where you can pause, edit, or delete them from the web UI.</p>
+<p>I've used routines for a couple of research projects where I would get updates every morning on the new research directions the cron job found via my Slack app that allowed me to quickly check in on the research on my way to work and take action if needed. I love this feature.</p>
+<h3 id="loop" tabindex="-1"><code>/loop</code></h3>
+<p>Where <code>/schedule</code> is &quot;every X minutes/days from now until I cancel&quot;, <code>/loop</code> is &quot;every X minutes inside this session until the task is done&quot;. Here's an example:</p>
+<pre><code>/loop 5m check if the deploy completed; if yes, run the smoke tests; if no, wait
+</code></pre>
+<p>Two modes:</p>
+<ul>
+<li><strong>Fixed interval.</strong> <code>/loop 5m &lt;prompt&gt;</code> - repeat every 5 minutes.</li>
+<li><strong>Dynamic / self-paced.</strong> <code>/loop &lt;prompt&gt;</code> (no interval) - Claude decides when to fire next based on what it's watching.</li>
+</ul>
+<p>Best use case: babysitting a long-running external process. CI runs, deploys, big migrations, etc. I used this one when I ran a 2-day long GPU training job for my research project. Very useful!</p>
+<h3 id="goal" tabindex="-1"><code>/goal</code></h3>
+<p>This one shipped in <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.139">v2.1.139</a> (May 2026). It's the &quot;keep working until done&quot; primitive. Here's an example:</p>
+<pre><code>/goal npm test exits 0 and there are no TypeScript errors
+</code></pre>
+<p>Mechanics:</p>
+<ul>
+<li>You state a condition. It should be measurable - &quot;exits 0&quot;, &quot;all 12 tests pass&quot;, &quot;the homepage renders without errors&quot;.</li>
+<li>Claude works on it. After each turn, a small verifier model checks the condition against the conversation transcript.</li>
+<li>If the condition isn't met, Claude continues automatically. No re-prompting from you.</li>
+<li>A live overlay shows elapsed time, turn count, and tokens.</li>
+<li><code>/goal pause</code>, <code>/goal resume</code>, <code>/goal clear</code> control it.</li>
+</ul>
+<p>The trap to avoid: <strong>vague goals run forever</strong>. &quot;Make this better&quot; is not a goal; there's no verifiable end state. &quot;All 12 unit tests pass&quot; is a goal. Combine <code>/goal</code> with <a href="#9-guardrails-hooks">section 9 (hooks)</a> and you have an autonomous worker that won't wander off. This can be pretty useful for people who have infinite token budgets and are planning to migrate big codebases from one language to another, or a huge refactor that needs to be done in multiple steps, and so on. This + the <code>/plan</code> mode can be a very powerful combination.</p>
+<h3 id="batch" tabindex="-1"><code>/batch</code></h3>
+<p>Fan-out: run the same prompt across multiple inputs (files, branches, items in a list).</p>
+<pre><code>/batch on each file under src/api/handlers/, add JSDoc to exported functions
+</code></pre>
+<p>Each input gets processed in a separate context (so they don't interfere with each other). Useful for &quot;apply this change to all of X&quot; tasks. Reports back when each finishes.</p>
+<h3 id="background-tasks" tabindex="-1">Background tasks</h3>
+<p>When Claude runs a long shell command, you can flag it as a background task. Claude is <em>notified</em> when it finishes; no polling, no <code>sleep</code> loops. You can ask Claude to do other work while it waits, or have several background tasks running at once.</p>
+<p>The mechanism is built into the <code>Bash</code> tool's <code>run_in_background</code> flag. You don't have to do anything special; just say &quot;run this in the background&quot; or &quot;kick off the deploy, then keep working on X&quot;. Claude handles the bookkeeping.</p>
+<h3 id="headless-mode-claude-p" tabindex="-1">Headless mode (<code>claude -p</code>)</h3>
+<p><code>claude -p &quot;...&quot;</code> runs a one-shot prompt and exits. Combined with <code>--output-format json</code> or <code>stream-json</code>, it's how you script Claude into a pipeline:</p>
+<pre><code class="language-bash">for file in $(git diff --name-only main...HEAD); do
+  claude -p &quot;review $file for security issues&quot; \
+    --output-format json \
+    --allowedTools &quot;Read,Grep&quot; \
+    &gt;&gt; review.jsonl
+done
+</code></pre>
+<p>This is the fan-out pattern under the hood. Two patterns I use a lot:</p>
+<ul>
+<li><strong>CI auto-reviewers.</strong> A <code>claude -p</code> step on every PR.</li>
+<li><strong>Bulk transforms.</strong> &quot;Generate type definitions for every JSON schema in <code>schemas/</code>&quot;.</li>
+</ul>
+<h3 id="parallel-sessions" tabindex="-1">Parallel sessions</h3>
+<p>Git worktrees + multiple <code>claude</code> instances:</p>
+<pre><code class="language-bash">git worktree add ../api-refactor   feature/api-refactor
+git worktree add ../db-migration   feature/db-migration
+
+# terminal 1
+cd ../api-refactor &amp;&amp; claude
+
+# terminal 2
+cd ../db-migration &amp;&amp; claude
+</code></pre>
+<p>Two sessions, two branches, two <code>CLAUDE.md</code>s if you want different ones. The sessions don't see each other. Boris Cherny talks about this pattern at length --- it's how the Claude Code team works on Claude Code.</p>
+<h3 id="writer-reviewer" tabindex="-1">Writer / Reviewer</h3>
+<p>A two-pass pattern from the <a href="https://docs.claude.com/en/docs/claude-code/best-practices">best-practices doc</a>:</p>
+<ol>
+<li><strong>Session A (writer).</strong> Implement the feature.</li>
+<li><strong>Session B (reviewer).</strong> Open a <em>fresh</em> session, point it at the diff, ask for review.</li>
+</ol>
+<p>The reviewer has none of the writer's rationalizations in context, so it'll flag things the writer skipped past. Crude but effective. The reviewer can be a subagent or a fully separate <code>claude --resume</code> instance.</p>
+<p>I have created my own <code>model-debate</code> skill (you can find it <a href="https://github.com/sumitdotml/skills/blob/main/skills/model-debate/SKILL.md">here</a>) that is pretty similar to this as well. There are 2 models that continue to debate until they reach a consensus, and we have a very strong agreement on the plan. This skill also works very well during the planning phase of a project.</p>
+<h3 id="html-artifacts-as-living-documents" tabindex="-1">HTML artifacts as living documents</h3>
+<p>This is the pattern that Thariq Shihipar, one of the main Claude Code leads at Anthropic, talks about in his blog post, and I thought it was a very interesting idea. The pitch:</p>
+<blockquote>
+<p>Instead of asking Claude to produce a markdown spec, ask it to produce an interactive HTML document. Claude knows HTML cold, the artifact renders anywhere, and you can include charts, dropdowns, code samples, dashboards, walkthroughs.</p>
+</blockquote>
+<p>Read the original post: <a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html">&quot;Using Claude Code: The Unreasonable Effectiveness of HTML&quot;</a>. Then poke at Thariq's <a href="https://thariqs.github.io/html-effectiveness/">examples gallery</a>, which is twenty real artifacts ranging from interactive spec docs to throwaway debugging UIs.</p>
+<p>Concrete things I've used this for since reading the post:</p>
+<ul>
+<li><strong>Architecture spec for a refactor.</strong> Markdown was a flat list; the HTML version was a clickable diagram you could expand to read the file-level changes.</li>
+<li><strong>Project status dashboard.</strong> A single <code>status.html</code> Claude regenerates every morning, with each project's open tasks, last commit, current owner.</li>
+<li><strong>Throwaway debugging UI.</strong> I had a stream of 800 events to triage. Claude built a one-page HTML viewer with a search box and filters. Took less time than <code>head -200 events.jsonl | jq</code>.</li>
+</ul>
+<p>Try it once. Ask Claude:</p>
+<pre><code>generate an interactive HTML file at status.html showing the four sections
+of this post as a clickable outline, with each section expandable to show
+the bullets underneath. inline css, no external deps.
+</code></pre>
+<p>Once you've felt the difference, you'll start reaching for it instead of markdown for anything you'll look at more than once.</p>
+<h3 id="references-for-section-11" tabindex="-1">References for <a href="#11-truly-agentic-the-advanced-features">section 11</a></h3>
+<ul>
+<li>Boris Cherny on Claude Code patterns: <a href="https://howborisusesclaudecode.com/">howborisusesclaudecode.com</a>. His list of ten patterns is the best concentrated dose of &quot;how to actually work this way&quot; out there.</li>
+<li>The Pragmatic Engineer interview with Boris: <a href="https://newsletter.pragmaticengineer.com/p/building-claude-code-with-boris-cherny">Building Claude Code</a>. Long, worth it.</li>
+<li>Thariq Shihipar on HTML artifacts: <a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html">the blog post</a>, <a href="https://thariqs.github.io/html-effectiveness/">the examples</a>.</li>
+<li>Anthropic's official best-practices doc: <a href="https://docs.claude.com/en/docs/claude-code/best-practices">docs.claude.com/en/docs/claude-code/best-practices</a>.</li>
+</ul>
+<hr>
+<h2 id="12-the-not-so-cool-basics-that-actually-matter" tabindex="-1">12. The not-so-cool basics that actually matter</h2>
+<p>This section is the one I wish someone had handed me on day one.</p>
+<h3 id="usage" tabindex="-1"><code>/usage</code></h3>
+<pre><code>/usage
+</code></pre>
+<p>Token usage for the current session, plus your weekly total. Check it whenever you've done a lot of work - it grounds your intuition about which tasks are cheap and which aren't.</p>
+<h3 id="status" tabindex="-1"><code>/status</code></h3>
+<p><code>/status</code> shows session metadata. Same info also lives at <a href="https://claude.ai/settings/usage">claude.ai/settings/usage</a>.</p>
+<h3 id="the-5-hour-rolling-window" tabindex="-1">The 5-hour rolling window</h3>
+<p>This is a very important concept to understand. Here's the official explanation:</p>
+<blockquote>
+<p>The 5-hour window starts when you <em>first</em> used Claude Code 5 hours ago. Not at a clock time. Not at midnight.</p>
+</blockquote>
+<p>So if you started at 8am, you get cut off at 1pm. If you take a break and come back at 1:30pm, the window resets and starts again. There's no way to force a reset early; you wait.</p>
+<p>Approximate per-window message budgets:</p>
+<table>
+<thead>
+<tr>
+<th>Plan</th>
+<th>Per 5-hour window</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pro</td>
+<td>~45 messages</td>
+</tr>
+<tr>
+<td>Max 5×</td>
+<td>~225 messages</td>
+</tr>
+<tr>
+<td>Max 20×</td>
+<td>~900 messages</td>
+</tr>
+</tbody>
+</table>
+<p>Heavy users on Pro will hit this. Max 5× is the right plan for someone whose primary tool is Claude Code.</p>
+<h3 id="weekly-cap" tabindex="-1">Weekly cap</h3>
+<p>Hard 7-day rolling cap. Shared across claude.ai, the IDE plugin, and Claude Code. If you're hitting weekly caps, the math says you're not getting the value of the next tier up; so it's time to upgrade or to be more deliberate about <code>/clear</code>.</p>
+<h3 id="model" tabindex="-1"><code>/model</code></h3>
+<pre><code>/model
+</code></pre>
+<p>Switches between the three current models (as of May 2026, the 3 models are Haiku 4.5, Sonnet 4.6 - normal + 1m, and Opus 4.7 in the Claude subscription. NOT the models in the Claude Code API). Rule of thumb:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Haiku 4.5</strong></td>
+<td>Small edits, lookups, &quot;where is X defined&quot;, trivial fixes. Fast, cheap.</td>
+</tr>
+<tr>
+<td><strong>Sonnet 4.6</strong></td>
+<td>Day-to-day work. Default. Good balance of cost and capability. Great at planning.</td>
+</tr>
+<tr>
+<td><strong>Opus 4.7</strong></td>
+<td>Hard reasoning. Architecture. Gnarly debugging. Anything that needs careful thinking. Expensive; use deliberately.</td>
+</tr>
+</tbody>
+</table>
+<p>Auto-routing exists; Claude Code will pick a model for you if you don't specify. But it's worth knowing how to override. For example: kick off plan mode in Opus, then <code>/model sonnet</code> to actually do the work.</p>
+<h3 id="permissions-and-hooks" tabindex="-1"><code>/permissions</code> and <code>/hooks</code></h3>
+<p>Diagnostic. <code>/permissions</code> shows what's currently allowed/denied. <code>/hooks</code> shows what hooks are wired up and what events they fire on. Use these when something is being unexpectedly blocked or allowed; usually there's a rule you forgot. You can find my own <code>permissions.deny</code> list <a href="https://raw.githubusercontent.com/sumitdotml/dotfiles/refs/heads/main/cc/settings.json">here</a>.</p>
+<hr>
+<h2 id="13-common-failure-modes" tabindex="-1">13. Common failure modes</h2>
+<p>The most common ways people sabotage themselves, lifted from the <a href="https://docs.claude.com/en/docs/claude-code/best-practices">best-practices doc</a> plus my own bruises:</p>
+<h3 id="kitchen-sink-sessions" tabindex="-1">Kitchen-sink sessions</h3>
+<p>Dumping a bug fix, a feature, and a doc rewrite into one session. Context bloats, quality degrades, Claude starts mixing up which file you're working on. Fix: <code>/clear</code> between unrelated tasks. Aggressively.</p>
+<h3 id="correcting-claude-on-the-same-thing-twice" tabindex="-1">Correcting Claude on the same thing twice</h3>
+<p>You said &quot;use Sonnet for this&quot; once. Claude went to Opus anyway. You corrected it. It happened again two turns later. Stop. The context is polluted. <code>/clear</code>, restate the goal once at the top, restart.</p>
+<p>The rough rule from Boris Cherny: after two corrections on the same point, the third one is wasted breath. The session needs a reset, not another nudge.</p>
+<h3 id="over-specified-claudemd" tabindex="-1">Over-specified CLAUDE.md</h3>
+<p>A 300-line CLAUDE.md is a sign you're trying to fix instruction problems with instructions. If a rule is deterministic, convert it to a hook (<a href="#9-guardrails-hooks">section 9</a>). If a rule is &quot;Claude already does this&quot;, delete it. Trim CLAUDE.md every few weeks - you'll find rules that don't earn their keep.</p>
+<h3 id="trust-without-verify" tabindex="-1">Trust without verify</h3>
+<p>You asked Claude to fix a bug; it said &quot;fixed!&quot;; you moved on. Six hours later you find the fix didn't actually run because the test was skipped on your platform. <strong>Always require verification</strong>. Use <code>/verify</code> (<a href="#7-skills-discovering-installing-using">section 7</a>). Run the tests yourself. Read the diff. Trust-but-verify isn't paranoia, it's the price of agentic.</p>
+<h3 id="infinite-exploration" tabindex="-1">Infinite exploration</h3>
+<p>You asked a vague question; Claude is now grepping its way through three layers of dependencies, ten minutes in. Stop it. Either drop into plan mode (<code>Shift+Tab</code>) and force a written plan, or hand the exploration to an <code>Explore</code> subagent so it doesn't pollute the main session.</p>
+<h3 id="-dangerously-skip-permissions-without-hooks" tabindex="-1"><code>--dangerously-skip-permissions</code> without hooks</h3>
+<p>The classic. You wanted speed, you skipped permissions, Claude ran <code>git push --force</code> to clean up &quot;the noise&quot; on your branch. Don't do this unless <a href="#9-guardrails-hooks">section 9</a> is wired up. Without hooks, it's a shotgun. With hooks, it is still a footgun, but at least you can have the time to react most of the time.</p>
+<hr>
+<h2 id="14-where-to-go-next" tabindex="-1">14. Where to go next</h2>
+<p>The above covers the most important concepts and features of Claude Code. Here are some other resources that you can explore:</p>
+<ul>
+<li><strong>Official best practices</strong>: <a href="https://docs.claude.com/en/docs/claude-code/best-practices">docs.claude.com/en/docs/claude-code/best-practices</a>. Mandatory. Re-read it once a month; it gets updated.</li>
+<li><strong>Boris Cherny's patterns</strong>: <a href="https://howborisusesclaudecode.com/">howborisusesclaudecode.com</a>. Ten patterns, all useful. Boris is the lead of Claude Code at Anthropic; this is the source.</li>
+<li><strong>Thariq Shihipar on HTML</strong>: <a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html">the blog post</a> and <a href="https://thariqs.github.io/html-effectiveness/">the examples</a>. The single pattern that has changed how I produce artifacts the most.</li>
+<li><strong>The Pragmatic Engineer interview with Boris</strong>: <a href="https://newsletter.pragmaticengineer.com/p/building-claude-code-with-boris-cherny">Building Claude Code</a>. For the why behind the design.</li>
+<li><strong>My skills + hooks kit</strong>: <a href="https://github.com/sumitdotml/skills">sumit/skills</a>. You can clone it, run <code>./install.sh</code>, and you've got a starter set.</li>
+<li><strong>Release notes</strong>: <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a>. Skim them every couple of weeks. Features ship fast.</li>
+</ul>
+<p>If I had to pick three things to do this week:</p>
+<ol>
+<li>Write a <code>CLAUDE.md</code> for your main repo and commit it.</li>
+<li>Install <code>claude-plugins-official</code> and play with some of the skills like <code>/frontend-design</code> and <code>/skill-creator</code>.</li>
+<li>Set up the three hooks from <a href="#9-guardrails-hooks">section 9</a> in <code>~/.claude/settings.json</code>. Try <code>--dangerously-skip-permissions</code> on a small task and feel the difference.</li>
+</ol>
+<p>Then come back to <a href="#11-truly-agentic-the-advanced-features">section 11</a> when you're ready to stop typing and start delegating.</p>
+<hr>
+<h2 id="15-bonus" tabindex="-1">15. Bonus</h2>
+<p>Typing gets painfully slow once you realize how much you been typing every single day to write prompts. Claude Code also has <code>/voice</code> mode which allows you to speak your prompts to Claude. You can find more information about it <a href="https://code.claude.com/docs/en/voice-dictation">here</a>.</p>
+<p>If you want a truly powerful voice dictating tool to 3x your prompt writing speed, I highly recommend you use <a href="https://wisprflow.ai/">Wispr Flow</a>. This tool feels like a magic wand.</p>
+  </main>
+  <aside class="toc" aria-label="Table of contents">
+    <p class="toc-label">On this page</p>
+    <ol class="toc-list" id="toc-list"></ol>
+  </aside>
+</div>
+
+<footer class="colophon">
+  <span>spfpt · 2026</span>
+  <span>Set in <a href="https://vercel.com/font">Geist</a> and <a href="https://fonts.google.com/specimen/JetBrains+Mono">JetBrains Mono</a></span>
+</footer>
+
+<script>
+(function() {
+  const KEY = 'spfpt-theme';
+  const root = document.documentElement;
+  const stored = localStorage.getItem(KEY);
+  if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+
+  document.querySelector('.theme-toggle').addEventListener('click', function() {
+    const current = root.getAttribute('data-theme');
+    let next;
+    if (current === 'dark') next = 'light';
+    else if (current === 'light') next = 'dark';
+    else next = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(KEY, next);
+  });
+
+  // Build TOC + add secnum to H2s
+  const headings = Array.from(document.querySelectorAll('main.article h2[id]'))
+    .filter(h => /^\d+-/.test(h.id));
+  const tocList = document.getElementById('toc-list');
+  const tocLinks = [];
+  headings.forEach(h => {
+    const m = h.textContent.match(/^(\d+)\.\s*(.+)$/);
+    const num = m ? m[1].padStart(2, '0') : '';
+    const title = m ? m[2] : h.textContent;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.innerHTML = '<span class="num">' + num + '</span><span>' + title + '</span>';
+    li.appendChild(a);
+    tocList.appendChild(li);
+    tocLinks.push({ id: h.id, link: a });
+    if (m) {
+      h.innerHTML = '<span class="secnum">§ ' + num + '</span>' + title;
+    }
+  });
+
+  // Scrollspy
+  const linkById = new Map(tocLinks.map(t => [t.id, t.link]));
+  let activeId = null;
+  function setActive(id) {
+    if (id === activeId) return;
+    if (activeId && linkById.has(activeId)) linkById.get(activeId).classList.remove('active');
+    if (id && linkById.has(id)) linkById.get(id).classList.add('active');
+    activeId = id;
+  }
+  function updateActive() {
+    const offset = 100;
+    let current = headings[0] ? headings[0].id : null;
+    for (const h of headings) {
+      if (h.getBoundingClientRect().top - offset <= 0) current = h.id;
+      else break;
+    }
+    setActive(current);
+  }
+  updateActive();
+  window.addEventListener('scroll', updateActive, { passive: true });
+
+  // Mobile TOC
+  const tocSidebar = document.querySelector('.toc');
+  const tocBackdrop = document.querySelector('.toc-backdrop');
+  const tocToggle = document.querySelector('.toc-toggle');
+  function openToc() {
+    tocSidebar.classList.add('open');
+    tocBackdrop.classList.add('open');
+  }
+  function closeToc() {
+    tocSidebar.classList.remove('open');
+    tocBackdrop.classList.remove('open');
+  }
+  tocToggle.addEventListener('click', function() {
+    if (tocSidebar.classList.contains('open')) closeToc(); else openToc();
+  });
+  tocBackdrop.addEventListener('click', closeToc);
+  tocList.addEventListener('click', function(e) {
+    if (e.target.closest('a')) closeToc();
+  });
+
+  // Topbar shadow on scroll
+  const topbar = document.querySelector('.topbar');
+  function updateTopbar() {
+    if (window.scrollY > 4) topbar.classList.add('scrolled');
+    else topbar.classList.remove('scrolled');
+  }
+  updateTopbar();
+  window.addEventListener('scroll', updateTopbar, { passive: true });
+
+  // Code blocks: build top bar (language label + copy button)
+  const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  document.querySelectorAll('main.article pre').forEach(function(pre) {
+    const code = pre.querySelector('code');
+    if (!code) return;
+    let lang = '';
+    if (code.className) {
+      const m = code.className.match(/language-([a-z0-9]+)/i);
+      if (m) lang = m[1];
+    }
+    const bar = document.createElement('div');
+    bar.className = 'codebar';
+    bar.innerHTML = '<span class="lang">' + lang + '</span>' +
+      '<button type="button" class="copy-btn" aria-label="Copy code">' + copyIcon + '<span class="label">Copy</span></button>';
+    pre.insertBefore(bar, code);
+
+    bar.querySelector('.copy-btn').addEventListener('click', async function() {
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        this.classList.add('copied');
+        this.querySelector('.label').textContent = 'Copied';
+        this.querySelector('svg').outerHTML = checkIcon;
+        setTimeout(() => {
+          this.classList.remove('copied');
+          this.querySelector('.label').textContent = 'Copy';
+          this.querySelector('svg').outerHTML = copyIcon;
+        }, 1600);
+      } catch (e) {
+        this.querySelector('.label').textContent = 'Failed';
+        setTimeout(() => { this.querySelector('.label').textContent = 'Copy'; }, 1600);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
