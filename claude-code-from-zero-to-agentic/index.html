@@ -8,6 +8,15 @@
 <meta property="og:title" content="Claude Code, from zero to agentic">
 <meta property="og:description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows.">
 <meta property="og:type" content="article">
+<meta property="og:url" content="https://spfpt.github.io/claude-code-from-zero-to-agentic/">
+<meta property="og:image" content="https://spfpt.github.io/claude-code-from-zero-to-agentic/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code, from zero to agentic">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Claude Code, from zero to agentic">
+<meta name="twitter:description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows.">
+<meta name="twitter:image" content="https://spfpt.github.io/claude-code-from-zero-to-agentic/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -1596,8 +1605,7 @@ the bullets underneath. inline css, no external deps.
 </div>
 
 <footer class="colophon">
-  <span>spfpt · 2026</span>
-  <span>Set in <a href="https://vercel.com/font">Geist</a> and <a href="https://fonts.google.com/specimen/JetBrains+Mono">JetBrains Mono</a></span>
+  <span>spfpt · <span class="year"></span></span>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
@@ -1607,6 +1615,7 @@ the bullets underneath. inline css, no external deps.
   const root = document.documentElement;
   const stored = localStorage.getItem(KEY);
   if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+  document.querySelectorAll('.year').forEach(el => { el.textContent = new Date().getFullYear(); });
 
   document.querySelector('.theme-toggle').addEventListener('click', function() {
     const current = root.getAttribute('data-theme');

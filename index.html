@@ -4,9 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>spfpt</title>
-<meta name="description" content="Long-form writing on AI tooling, engineering, and the practice of building.">
+<meta name="description" content="Long-form writing on engineering practice, LLM finetuning research, and building with AI agents.">
 <meta property="og:title" content="spfpt">
-<meta property="og:description" content="Long-form writing on AI tooling, engineering, and the practice of building.">
+<meta property="og:description" content="Long-form writing on engineering practice, LLM finetuning research, and building with AI agents.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://spfpt.github.io/">
+<meta property="og:image" content="https://spfpt.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="spfpt">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="spfpt">
+<meta name="twitter:description" content="Long-form writing on engineering practice, LLM finetuning research, and building with AI agents.">
+<meta name="twitter:image" content="https://spfpt.github.io/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -147,7 +157,7 @@ main {
   font-size: 1rem;
   color: var(--ink-soft);
   line-height: 1.55;
-  max-width: 32rem;
+  max-width: 44rem;
   margin: 0 0 0.62rem 0;
 }
 .intro p a {
@@ -289,7 +299,7 @@ main {
 <main>
   <section class="intro">
     <h1>spfpt</h1>
-    <p>Notes on AI tooling, engineering practice, LLM finetuning research, and working with agents.</p>
+    <p>Notes on engineering practice, LLM finetuning research, and building with AI agents.</p>
     <p><a href="https://github.com/sumitdotml">GitHub</a>・<a href="https://linkedin.com/in/sumit-pokharel"> LinkedIn</a></p>
   </section>
 
@@ -305,8 +315,7 @@ main {
 </main>
 
 <footer class="colophon">
-  <span>spfpt · 2026</span>
-  <span>Set in <a href="https://vercel.com/font">Geist</a></span>
+  <span>spfpt · <span class="year"></span></span>
 </footer>
 
 <script>
@@ -315,6 +324,7 @@ main {
   const root = document.documentElement;
   const stored = localStorage.getItem(KEY);
   if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+  document.querySelectorAll('.year').forEach(el => { el.textContent = new Date().getFullYear(); });
   document.querySelector('.theme-toggle').addEventListener('click', function() {
     const current = root.getAttribute('data-theme');
     let next;
