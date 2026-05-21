@@ -282,10 +282,12 @@ body {
 }
 
 .article > p:first-of-type {
+  max-width: 60rem;
   font-size: 1.12rem;
+  font-style: italic;
   color: var(--ink-soft);
-  line-height: 1.55;
-  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+  margin: 0 auto 1.9rem;
 }
 
 .article h2 {
@@ -607,7 +609,8 @@ body {
   <main id="main" class="article">
     <h1>Claude Code, from zero to agentic</h1>
 <p>A working guide for people who are comfortable with ChatGPT and want to make Claude Code feel the same way, and then go three or four steps further.</p>
-<p>This is long, on purpose. I advice you to read it top to bottom the first time. Bookmark it, and come back to §7 onwards when you actually need them.</p>
+<p>This is a long post. I advice you to read it top to bottom the first time if you're new to Claude Code, then bookmark it, and come back to <a href="#7-skills-discovering-installing-using">Skills: discovering, installing, using</a> and the sections after it when you actually need them.</p>
+<p>If you're already comfortable with Claude Code, you can skip the first section and go straight to the <a href="#2-claudemd-is-the-most-important-file-in-your-repo">CLAUDE.md</a> section. Or simply <a href="#toc-list" class="toc-open">open the table of contents</a> and click on the section you want to read.</p>
 <blockquote>
 <p>Targets Claude Code v2.1.145, May 2026. Versions move fast, so I'll flag features that shipped recently so you can sanity-check against the <a href="https://github.com/anthropics/claude-code/releases">release notes</a> if something looks off.</p>
 </blockquote>
@@ -661,7 +664,7 @@ body {
 <hr>
 <h2 id="2-claudemd-is-the-most-important-file-in-your-repo" tabindex="-1">2. CLAUDE.md is the most important file in your repo</h2>
 <p>If you remember one thing from this post: <strong>drop a <code>CLAUDE.md</code> in your repo</strong>. It might as well be the single highest-leverage change you can make.</p>
-<p><code>CLAUDE.md</code> is a markdown file that Claude Code auto-loads at the start of every session in that directory. It's how you tell Claude things it can't infer from the code --- conventions, commands, gotchas, &quot;we use uv not pip&quot; --- so you don't have to repeat yourself.</p>
+<p><code>CLAUDE.md</code> is a markdown file that Claude Code auto-loads at the start of every session in that directory. It's how you tell Claude things it can't infer from the code, such as conventions, commands, gotchas, &quot;we use uv not pip&quot;, so you don't have to repeat yourself.</p>
 <h3 id="where-it-lives" tabindex="-1">Where it lives</h3>
 <p>Claude Code looks for <code>CLAUDE.md</code> in three places, in this order:</p>
 <table>
@@ -839,7 +842,7 @@ gotchas, and stub each section with a one-line placeholder.
 <h2 id="5-resuming-sessions" tabindex="-1">5. Resuming sessions</h2>
 <p>Day-old debugging sessions, multi-day features, half-done refactors: you don't have to re-explain anything. Claude Code persists sessions automatically.</p>
 <h3 id="the-resume-flags" tabindex="-1">The resume flags</h3>
-<pre><code class="language-bash">claude --continue           # or `claude -c` --- pick up the most recent session in this dir
+<pre><code class="language-bash">claude --continue           # or `claude -c`: pick up the most recent session in this dir
 claude --resume             # interactive picker across all sessions
 claude --resume my-oauth    # jump to a named session
 </code></pre>
@@ -853,8 +856,8 @@ Rename anything you might want to come back to.</p>
 <h3 id="checkpoints-and-rewind" tabindex="-1">Checkpoints and <code>/rewind</code></h3>
 <p>Claude Code auto-creates a checkpoint before each change. To roll back:</p>
 <ul>
-<li><code>Esc Esc</code> --- opens the rewind menu.</li>
-<li><code>/rewind</code> --- same menu via slash command.</li>
+<li><code>Esc Esc</code>: opens the rewind menu.</li>
+<li><code>/rewind</code>: opens the same menu via slash command.</li>
 </ul>
 <p><img src="./assets/rewind1.png" alt="rewind1"></p>
 <p>+</p>
@@ -910,7 +913,7 @@ When compacting, always preserve:
 <p>Auto-compaction kicks in near the context limit, but proactive <code>/compact</code> is cheaper and the result is better-tailored.</p>
 <hr>
 <h2 id="7-skills-discovering-installing-using" tabindex="-1">7. Skills: discovering, installing, using</h2>
-<p>A skill is a packaged instruction set you can invoke with <code>/skill-name</code>. Think of it as a reusable prompt with optional tool restrictions --- &quot;the way I want Claude to do X&quot; baked into one slash command.</p>
+<p>A skill is a packaged instruction set you can invoke with <code>/skill-name</code>. Think of it as a reusable prompt with optional tool restrictions, basically &quot;the way I want Claude to do X&quot; baked into one slash command.</p>
 <h3 id="skills" tabindex="-1"><code>/skills</code></h3>
 <p>In a session, type:</p>
 <pre><code class="language-claude">/skills
@@ -1369,7 +1372,7 @@ claude
 </tr>
 </tbody>
 </table>
-<p>You invoke them via the <code>Agent</code> tool from inside Claude Code, or via slash commands when configured. They run independently --- you can run several in parallel.</p>
+<p>You invoke them via the <code>Agent</code> tool from inside Claude Code, or via slash commands when configured. They run independently, so you can run several in parallel.</p>
 <p>You can also define <strong>custom subagents</strong>. Drop a file at <code>.claude/agents/&lt;name&gt;.md</code>:</p>
 <pre><code class="language-markdown">---
 name: security-reviewer
@@ -1387,7 +1390,7 @@ You are a security engineer. Review code changes for:
 Output: a short list of findings, each with severity (high/medium/low),
 file:line reference, and a one-sentence fix suggestion.
 </code></pre>
-<p>Now Claude can spawn <code>security-reviewer</code> for any PR review. Subagents are the most underrated lever in Claude Code --- the main reason is that nobody bothers to define custom ones. Define two or three of your own.</p>
+<p>Now Claude can spawn <code>security-reviewer</code> for any PR review. Subagents are the most underrated lever in Claude Code, the main reason being that nobody bothers to define custom ones. Define two or three of your own.</p>
 <h3 id="agent-teams" tabindex="-1">Agent teams</h3>
 <p>A coordinator agent that delegates to multiple subagents and merges their results. Think &quot;lead engineer assigning sub-tasks&quot;, but the coordinator is a Claude session and the subordinates are too. Useful for parallelizable work - a code review that wants security, performance, <em>and</em> style passes, for example.</p>
 <h3 id="routines-schedule" tabindex="-1">Routines (<code>/schedule</code>)</h3>
@@ -1455,7 +1458,7 @@ cd ../api-refactor &amp;&amp; claude
 # terminal 2
 cd ../db-migration &amp;&amp; claude
 </code></pre>
-<p>Two sessions, two branches, two <code>CLAUDE.md</code>s if you want different ones. The sessions don't see each other. Boris Cherny talks about this pattern at length --- it's how the Claude Code team works on Claude Code.</p>
+<p>Two sessions, two branches, two <code>CLAUDE.md</code>s if you want different ones. The sessions don't see each other. Boris Cherny talks about this pattern at length, so it's how the Claude Code team works on Claude Code.</p>
 <h3 id="writer-reviewer" tabindex="-1">Writer / Reviewer</h3>
 <p>A two-pass pattern from the <a href="https://docs.claude.com/en/docs/claude-code/best-practices">best-practices doc</a>:</p>
 <ol>
@@ -1674,6 +1677,12 @@ the bullets underneath. inline css, no external deps.
   function closeToc() { tocSidebar.classList.remove('open'); tocBackdrop.classList.remove('open'); }
   tocToggle.addEventListener('click', function() {
     if (tocSidebar.classList.contains('open')) closeToc(); else openToc();
+  });
+  document.querySelectorAll('.toc-open').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      openToc();
+    });
   });
   tocBackdrop.addEventListener('click', closeToc);
   tocList.addEventListener('click', function(e) { if (e.target.closest('a')) closeToc(); });
