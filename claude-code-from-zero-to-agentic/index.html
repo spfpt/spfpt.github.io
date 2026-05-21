@@ -24,11 +24,21 @@
   --ink-mute: #A1A1AA;
   --accent: #5D7290;
   --accent-soft: #8FA3C2;
+  --accent-bg: #E5EAF1;
   --rule: #E4E4DF;
   --rule-strong: #D4D3CD;
   --code-border: #DEDDD7;
   --selection: #D9E0EB;
   --bar-bg: #EDECE7;
+
+  --hl-comment: #9B9AA3;
+  --hl-keyword: #7C5897;
+  --hl-string: #5E8C4A;
+  --hl-number: #A06B56;
+  --hl-attr: #4F6A8B;
+  --hl-variable: #52525B;
+  --hl-title: #4F6A8B;
+  --hl-meta: #A06B56;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -41,11 +51,21 @@
     --ink-mute: #71717A;
     --accent: #8FA3C2;
     --accent-soft: #B3C2DA;
+    --accent-bg: #1F2733;
     --rule: #2A2A2E;
     --rule-strong: #3A3A3F;
     --code-border: #2A2A2E;
     --selection: #2D3645;
     --bar-bg: #1A1A1E;
+
+    --hl-comment: #71717A;
+    --hl-keyword: #B89DD1;
+    --hl-string: #9BC585;
+    --hl-number: #D4A892;
+    --hl-attr: #A4B8D1;
+    --hl-variable: #A1A1AA;
+    --hl-title: #A4B8D1;
+    --hl-meta: #D4A892;
   }
 }
 
@@ -58,11 +78,21 @@
   --ink-mute: #71717A;
   --accent: #8FA3C2;
   --accent-soft: #B3C2DA;
+  --accent-bg: #1F2733;
   --rule: #2A2A2E;
   --rule-strong: #3A3A3F;
   --code-border: #2A2A2E;
   --selection: #2D3645;
   --bar-bg: #1A1A1E;
+
+  --hl-comment: #71717A;
+  --hl-keyword: #B89DD1;
+  --hl-string: #9BC585;
+  --hl-number: #D4A892;
+  --hl-attr: #A4B8D1;
+  --hl-variable: #A1A1AA;
+  --hl-title: #A4B8D1;
+  --hl-meta: #D4A892;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -82,7 +112,7 @@ body {
 }
 ::selection { background: var(--selection); color: var(--ink); }
 
-/* TOP BAR */
+/* TOP BAR — minimal, anchored hairline */
 .topbar {
   position: sticky;
   top: 0;
@@ -93,38 +123,38 @@ body {
 }
 .topbar.scrolled { border-bottom-color: var(--rule); }
 .topbar-inner {
-  max-width: 64rem;
+  max-width: 80rem;
   margin: 0 auto;
-  padding: 0.9rem 1.5rem;
+  padding: 0.8rem 1.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .brand {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 500;
+  font-size: 0.88rem;
   color: var(--ink);
   text-decoration: none;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
 }
 .brand:hover { color: var(--accent); }
-.actions { display: flex; gap: 0.4rem; align-items: center; }
+.actions { display: flex; gap: 0.25rem; align-items: center; }
 .iconbtn {
   background: transparent;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  width: 34px;
-  height: 34px;
+  border: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--ink-soft);
-  transition: color 150ms, border-color 150ms, background-color 150ms;
+  color: var(--ink-mute);
+  transition: color 150ms ease;
 }
-.iconbtn:hover { color: var(--ink); border-color: var(--rule-strong); background: var(--bg-soft); }
-.iconbtn svg { width: 15px; height: 15px; }
+.iconbtn:hover { color: var(--ink); }
+.iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.iconbtn svg { width: 16px; height: 16px; }
 .theme-toggle .sun { display: none; }
 .theme-toggle .moon { display: block; }
 [data-theme="dark"] .theme-toggle .sun { display: block; }
@@ -133,67 +163,98 @@ body {
   :root:not([data-theme="light"]) .theme-toggle .sun { display: block; }
   :root:not([data-theme="light"]) .theme-toggle .moon { display: none; }
 }
-.toc-toggle { display: none; }
+.toc-toggle { display: inline-flex; }
 
-/* LAYOUT */
+/* LAYOUT — single column. TOC is a drawer overlay, not part of flow. */
 .layout {
-  max-width: 64rem;
+  max-width: 80rem;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem 5rem;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 13rem;
-  gap: 3rem;
+  padding: 2.5rem 1.75rem 5rem;
 }
 
-/* SIDEBAR TOC */
+/* TOC — always a slide-in drawer from the right */
 .toc {
-  position: sticky;
-  top: 4.5rem;
-  align-self: start;
-  max-height: calc(100vh - 6rem);
-  overflow-y: auto;
-  font-size: 0.82rem;
-  padding-left: 0.75rem;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(85vw, 22rem);
+  height: 100dvh;
+  padding: 4.5rem 1.5rem 2rem;
+  background: var(--bg);
   border-left: 1px solid var(--rule);
+  transform: translateX(100%);
+  transition: transform 220ms ease;
+  z-index: 20;
+  box-shadow: -2px 0 30px rgba(0,0,0,0.06);
+  overflow-y: auto;
 }
+.toc.open { transform: translateX(0); }
+.toc-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 24, 27, 0.3);
+  z-index: 15;
+}
+.toc-backdrop.open { display: block; }
 .toc::-webkit-scrollbar { width: 4px; }
 .toc::-webkit-scrollbar-track { background: transparent; }
 .toc::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 2px; }
 .toc-label {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-mute);
-  margin: 0 0 0.85rem 0;
+  margin: 0 0 1rem 0;
   font-weight: 500;
+  padding-left: 0.7rem;
 }
-.toc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.toc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.1rem; }
 .toc-list a {
   display: flex;
-  gap: 0.55rem;
+  gap: 0.6rem;
   color: var(--ink-soft);
   text-decoration: none;
-  line-height: 1.35;
-  font-size: 0.82rem;
-  transition: color 150ms ease;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.4rem 0.4rem 0.7rem;
+  border-left: 2px solid var(--rule);
+  transition: color 150ms ease, border-color 150ms ease;
 }
-.toc-list a:hover { color: var(--ink); }
+.toc-list a:hover { color: var(--ink); border-left-color: var(--rule-strong); }
 .toc-list a .num {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   color: var(--ink-mute);
-  flex: 0 0 1.4rem;
-  padding-top: 0.1rem;
+  flex: 0 0 1.5rem;
+  padding-top: 0.18rem;
+  transition: color 150ms ease;
 }
-.toc-list a.active { color: var(--accent); }
-.toc-list a.active .num { color: var(--accent); }
+/* Minimal active — just bolder weight + ink color. No background. */
+.toc-list a.active { color: var(--ink); font-weight: 500; }
+.toc-list a.active .num { color: var(--ink); }
 
-/* ARTICLE */
-.article { max-width: 38rem; min-width: 0; }
+/* ARTICLE — text constrained + centered in viewport; visuals breathe wider */
+.article {
+  min-width: 0;
+}
+.article > h1,
+.article > h2,
+.article > h3,
+.article > h4,
+.article > p,
+.article > ul,
+.article > ol,
+.article > blockquote,
+.article > table,
+.article > hr {
+  max-width: 46rem;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .article > h1 {
-  font-family: var(--font-sans);
   font-weight: 700;
   font-size: clamp(2rem, 4.5vw, 2.8rem);
   line-height: 1.1;
@@ -210,29 +271,19 @@ body {
 }
 
 .article h2 {
-  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 1.55rem;
+  font-size: 1.65rem;
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   margin: 4rem 0 1.1rem 0;
   color: var(--ink);
   scroll-margin-top: 4rem;
 }
-.article h2 .secnum {
-  display: block;
-  font-family: var(--font-mono);
-  font-weight: 400;
-  font-size: 0.74rem;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  margin-bottom: 0.4rem;
-}
+.article h2 .secnum { display: none; }
 
 .article h3 {
-  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 1.12rem;
+  font-size: 1.14rem;
   line-height: 1.3;
   letter-spacing: -0.005em;
   margin: 2.4rem 0 0.7rem 0;
@@ -241,10 +292,8 @@ body {
 }
 
 .article h4 {
-  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.96rem;
-  letter-spacing: 0;
   margin: 1.8rem 0 0.55rem 0;
   color: var(--ink);
   scroll-margin-top: 5rem;
@@ -277,7 +326,6 @@ body {
   padding: 0.2rem 0 0.2rem 1rem;
   border-left: 2px solid var(--rule-strong);
   color: var(--ink-soft);
-  font-style: normal;
   font-size: 0.98rem;
   line-height: 1.6;
 }
@@ -292,14 +340,25 @@ body {
   margin: 2.5rem 0;
 }
 
-.article img {
+/* IMAGES — break much wider than text column so screenshots stay legible */
+.article p.image-row {
+  margin: 1.6rem auto;
+}
+.article p.image-row img {
   display: block;
+  width: 100%;
   max-width: 100%;
   height: auto;
-  margin: 1.4rem 0;
+  margin: 0 auto;
   border: 1px solid var(--rule);
   border-radius: 6px;
   background: var(--bg-soft);
+}
+.article img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
 }
 
 /* INLINE CODE */
@@ -313,7 +372,7 @@ body {
   color: var(--ink);
 }
 
-/* CODE BLOCKS — the focus */
+/* CODE BLOCKS */
 .article pre {
   background: var(--bg-code);
   border: 1px solid var(--code-border);
@@ -327,19 +386,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.45rem 0.85rem 0.45rem 1rem;
+  padding: 0.5rem 0.75rem 0.5rem 1rem;
   background: var(--bar-bg);
   border-bottom: 1px solid var(--code-border);
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: lowercase;
   color: var(--ink-mute);
   user-select: none;
-  min-height: 30px;
+  min-height: 32px;
 }
-.article pre .codebar .lang { color: var(--ink-soft); font-weight: 500; }
-.article pre .codebar .lang:empty::before { content: "code"; color: var(--ink-mute); }
+.article pre .codebar .lang {
+  color: var(--ink-soft);
+  font-weight: 500;
+  min-height: 1em;
+}
 .article pre .copy-btn {
   background: transparent;
   border: 0;
@@ -348,7 +410,7 @@ body {
   letter-spacing: 0.04em;
   color: var(--ink-mute);
   cursor: pointer;
-  padding: 0.15rem 0.4rem;
+  padding: 0.2rem 0.45rem;
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
@@ -364,12 +426,26 @@ body {
   border: 0;
   padding: 1rem 1.15rem;
   font-size: 0.83rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--ink);
   overflow-x: auto;
   white-space: pre;
   border-radius: 0;
 }
+
+/* SYNTAX HIGHLIGHTING — applied by highlight.js, our palette */
+.hljs-comment, .hljs-quote { color: var(--hl-comment); font-style: italic; }
+.hljs-keyword, .hljs-built_in, .hljs-literal, .hljs-type, .hljs-keyword.hljs-selector-tag { color: var(--hl-keyword); font-weight: 500; }
+.hljs-string, .hljs-meta-string, .hljs-regexp { color: var(--hl-string); }
+.hljs-number, .hljs-link, .hljs-bullet, .hljs-symbol { color: var(--hl-number); }
+.hljs-attr, .hljs-attribute, .hljs-name, .hljs-tag, .hljs-property, .hljs-selector-class, .hljs-selector-id { color: var(--hl-attr); }
+.hljs-variable, .hljs-template-variable, .hljs-params { color: var(--hl-variable); }
+.hljs-title, .hljs-section, .hljs-function .hljs-title, .hljs-class .hljs-title { color: var(--hl-title); font-weight: 500; }
+.hljs-meta, .hljs-meta-keyword { color: var(--hl-meta); }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 600; }
+.hljs-deletion { background: rgba(160, 107, 86, 0.12); }
+.hljs-addition { background: rgba(94, 140, 74, 0.12); }
 
 /* TABLES */
 .article table {
@@ -393,11 +469,36 @@ body {
 .article tr:last-child td { border-bottom: 0; }
 .article table code { font-size: 0.82em; }
 
+/* CENTERING — applied late so it survives shorthand margins on specific rules */
+.article > h1,
+.article > h2,
+.article > h3,
+.article > h4,
+.article > p,
+.article > ul,
+.article > ol,
+.article > blockquote,
+.article > table,
+.article > hr {
+  margin-left: auto;
+  margin-right: auto;
+}
+.article > pre {
+  max-width: 46rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.article > p.image-row {
+  max-width: 70rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* FOOTER */
 .colophon {
-  max-width: 64rem;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem 3.5rem;
+  padding: 2.5rem 1.75rem 3.5rem;
   border-top: 1px solid var(--rule);
   color: var(--ink-mute);
   font-size: 0.84rem;
@@ -425,40 +526,27 @@ body {
 .skip-link:focus { top: 1rem; }
 
 /* RESPONSIVE */
-@media (max-width: 920px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    padding: 2rem 1.25rem 4rem;
+@media (max-width: 760px) {
+  .layout { padding: 2rem 1.25rem 4rem; }
+  .article > h1,
+  .article > h2,
+  .article > h3,
+  .article > h4,
+  .article > p,
+  .article > ul,
+  .article > ol,
+  .article > blockquote,
+  .article > pre,
+  .article > table,
+  .article > hr,
+  .article > p.image-row {
+    max-width: 100%;
   }
-  .toc {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: min(85vw, 20rem);
-    height: 100dvh;
-    padding: 4.5rem 1.5rem 2rem;
-    background: var(--bg);
-    border-left: 1px solid var(--rule);
-    transform: translateX(100%);
-    transition: transform 220ms ease;
-    z-index: 20;
-    box-shadow: -2px 0 30px rgba(0,0,0,0.06);
-  }
-  .toc.open { transform: translateX(0); }
-  .toc-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(24, 24, 27, 0.3);
-    z-index: 15;
-  }
-  .toc-backdrop.open { display: block; }
-  .toc-toggle { display: inline-flex; }
-  .article > h1 { font-size: clamp(1.8rem, 6.5vw, 2.4rem); }
-  .article h2 { font-size: 1.4rem; margin-top: 3rem; }
-  .article h3 { font-size: 1.06rem; }
+  .topbar-inner { padding: 0.75rem 1.25rem; }
   .colophon { padding: 2rem 1.25rem 3rem; }
+  .article > h1 { font-size: clamp(1.8rem, 6.5vw, 2.4rem); }
+  .article h2 { font-size: 1.45rem; margin-top: 3rem; }
+  .article h3 { font-size: 1.06rem; }
 }
 
 @media (max-width: 480px) {
@@ -1502,6 +1590,7 @@ the bullets underneath. inline css, no external deps.
   <span>Set in <a href="https://vercel.com/font">Geist</a> and <a href="https://fonts.google.com/specimen/JetBrains+Mono">JetBrains Mono</a></span>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script>
 (function() {
   const KEY = 'spfpt-theme';
@@ -1519,7 +1608,7 @@ the bullets underneath. inline css, no external deps.
     localStorage.setItem(KEY, next);
   });
 
-  // Build TOC + add secnum to H2s
+  // Build TOC
   const headings = Array.from(document.querySelectorAll('main.article h2[id]'))
     .filter(h => /^\d+-/.test(h.id));
   const tocList = document.getElementById('toc-list');
@@ -1535,9 +1624,6 @@ the bullets underneath. inline css, no external deps.
     li.appendChild(a);
     tocList.appendChild(li);
     tocLinks.push({ id: h.id, link: a });
-    if (m) {
-      h.innerHTML = '<span class="secnum">§ ' + num + '</span>' + title;
-    }
   });
 
   // Scrollspy
@@ -1565,21 +1651,13 @@ the bullets underneath. inline css, no external deps.
   const tocSidebar = document.querySelector('.toc');
   const tocBackdrop = document.querySelector('.toc-backdrop');
   const tocToggle = document.querySelector('.toc-toggle');
-  function openToc() {
-    tocSidebar.classList.add('open');
-    tocBackdrop.classList.add('open');
-  }
-  function closeToc() {
-    tocSidebar.classList.remove('open');
-    tocBackdrop.classList.remove('open');
-  }
+  function openToc() { tocSidebar.classList.add('open'); tocBackdrop.classList.add('open'); }
+  function closeToc() { tocSidebar.classList.remove('open'); tocBackdrop.classList.remove('open'); }
   tocToggle.addEventListener('click', function() {
     if (tocSidebar.classList.contains('open')) closeToc(); else openToc();
   });
   tocBackdrop.addEventListener('click', closeToc);
-  tocList.addEventListener('click', function(e) {
-    if (e.target.closest('a')) closeToc();
-  });
+  tocList.addEventListener('click', function(e) { if (e.target.closest('a')) closeToc(); });
 
   // Topbar shadow on scroll
   const topbar = document.querySelector('.topbar');
@@ -1590,18 +1668,35 @@ the bullets underneath. inline css, no external deps.
   updateTopbar();
   window.addEventListener('scroll', updateTopbar, { passive: true });
 
-  // Code blocks: build top bar (language label + copy button)
+  // Image-only paragraphs: tag them so they can break wider
+  document.querySelectorAll('main.article > p').forEach(p => {
+    const kids = Array.from(p.childNodes).filter(n =>
+      !(n.nodeType === Node.TEXT_NODE && !n.textContent.trim())
+    );
+    if (kids.length === 1 && kids[0].nodeType === Node.ELEMENT_NODE && kids[0].tagName === 'IMG') {
+      p.classList.add('image-row');
+    }
+  });
+
+  // Code blocks: build bar + syntax highlight
   const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
   document.querySelectorAll('main.article pre').forEach(function(pre) {
     const code = pre.querySelector('code');
     if (!code) return;
+
     let lang = '';
     if (code.className) {
       const m = code.className.match(/language-([a-z0-9]+)/i);
       if (m) lang = m[1];
     }
+
+    // Syntax highlight if we have a language and hljs loaded
+    if (lang && typeof hljs !== 'undefined' && hljs.getLanguage && hljs.getLanguage(lang)) {
+      try { hljs.highlightElement(code); } catch (e) { /* ignore */ }
+    }
+
     const bar = document.createElement('div');
     bar.className = 'codebar';
     bar.innerHTML = '<span class="lang">' + lang + '</span>' +
