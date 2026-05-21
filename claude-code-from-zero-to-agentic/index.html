@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claude Code, from zero to agentic — spfpt</title>
+<title>Claude Code, from zero to agentic | spfpt</title>
 <meta name="description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows. CLAUDE.md, plan mode, skills, hooks, sandboxes, /goal, and the rest.">
 <meta property="og:title" content="Claude Code, from zero to agentic">
 <meta property="og:description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows.">
@@ -112,16 +112,13 @@ body {
 }
 ::selection { background: var(--selection); color: var(--ink); }
 
-/* TOP BAR — minimal, anchored hairline */
+/* TOP BAR */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 10;
   background: var(--bg);
-  border-bottom: 1px solid transparent;
-  transition: border-color 200ms ease;
 }
-.topbar.scrolled { border-bottom-color: var(--rule); }
 .topbar-inner {
   max-width: 80rem;
   margin: 0 auto;
@@ -165,14 +162,14 @@ body {
 }
 .toc-toggle { display: inline-flex; }
 
-/* LAYOUT — single column. TOC is a drawer overlay, not part of flow. */
+/* LAYOUT - single column. TOC is a drawer overlay, not part of flow. */
 .layout {
   max-width: 80rem;
   margin: 0 auto;
   padding: 2.5rem 1.75rem 5rem;
 }
 
-/* TOC — always a slide-in drawer from the right */
+/* TOC - always a slide-in drawer from the right */
 .toc {
   position: fixed;
   top: 0;
@@ -231,11 +228,11 @@ body {
   padding-top: 0.18rem;
   transition: color 150ms ease;
 }
-/* Minimal active — just bolder weight + ink color. No background. */
+/* Minimal active - just bolder weight + ink color. No background. */
 .toc-list a.active { color: var(--ink); font-weight: 500; }
 .toc-list a.active .num { color: var(--ink); }
 
-/* ARTICLE — text constrained + centered in viewport; visuals breathe wider */
+/* ARTICLE - text constrained + centered in viewport; visuals breathe wider */
 .article {
   min-width: 0;
 }
@@ -340,9 +337,9 @@ body {
   margin: 2.5rem 0;
 }
 
-/* IMAGES — break much wider than text column so screenshots stay legible */
+/* IMAGES - moderate breakout for screenshots without changing reading width */
 .article p.image-row {
-  margin: 1.6rem auto;
+  margin: 1.45rem auto 1.7rem;
 }
 .article p.image-row img {
   display: block;
@@ -433,7 +430,7 @@ body {
   border-radius: 0;
 }
 
-/* SYNTAX HIGHLIGHTING — applied by highlight.js, our palette */
+/* SYNTAX HIGHLIGHTING - applied by highlight.js, our palette */
 .hljs-comment, .hljs-quote { color: var(--hl-comment); font-style: italic; }
 .hljs-keyword, .hljs-built_in, .hljs-literal, .hljs-type, .hljs-keyword.hljs-selector-tag { color: var(--hl-keyword); font-weight: 500; }
 .hljs-string, .hljs-meta-string, .hljs-regexp { color: var(--hl-string); }
@@ -469,7 +466,7 @@ body {
 .article tr:last-child td { border-bottom: 0; }
 .article table code { font-size: 0.82em; }
 
-/* CENTERING — applied late so it survives shorthand margins on specific rules */
+/* CENTERING - applied late so it survives shorthand margins on specific rules */
 .article > h1,
 .article > h2,
 .article > h3,
@@ -489,7 +486,7 @@ body {
   margin-right: auto;
 }
 .article > p.image-row {
-  max-width: 70rem;
+  max-width: 60rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -1658,15 +1655,6 @@ the bullets underneath. inline css, no external deps.
   });
   tocBackdrop.addEventListener('click', closeToc);
   tocList.addEventListener('click', function(e) { if (e.target.closest('a')) closeToc(); });
-
-  // Topbar shadow on scroll
-  const topbar = document.querySelector('.topbar');
-  function updateTopbar() {
-    if (window.scrollY > 4) topbar.classList.add('scrolled');
-    else topbar.classList.remove('scrolled');
-  }
-  updateTopbar();
-  window.addEventListener('scroll', updateTopbar, { passive: true });
 
   // Image-only paragraphs: tag them so they can break wider
   document.querySelectorAll('main.article > p').forEach(p => {
