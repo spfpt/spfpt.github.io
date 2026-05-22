@@ -641,12 +641,12 @@ body {
 <p>Please come back when <code>claude --version</code> works.</p>
 <h3 id="two-first-examples" tabindex="-1">Two first examples</h3>
 <p>In your terminal, <code>cd</code> into a project you know well. Any project. Then, run the following command:</p>
-<pre><code>claude
+<pre><code class="language-bash">claude
 </code></pre>
 <p><img src="./assets/welcome-banner.png" alt="welcome-banner"></p>
 <p>This is the welcome banner.</p>
 <p>A prompt appears. Try:</p>
-<pre><code>what does this repo do?
+<pre><code class="language-claude">what does this repo do?
 </code></pre>
 <p><img src="./assets/what-does-this-repo-do.png" alt="what-does-this-repo-do"></p>
 <p>Claude reads enough of your repo (README, top-level files, maybe <code>package.json</code> or <code>pyproject.toml</code>) to answer. You did nothing other than <code>cd</code> to the project directory and run <code>claude</code> and ask 1 simple question. That's the difference from ChatGPT.</p>
@@ -654,7 +654,7 @@ body {
 <pre><code class="language-bash">echo &quot;# README.md\n\nLearning LoRA and finetuning by doing my own experiment where I compare three versions of the same \`Qwen3-8B\` math run:\n\n1. the untouched baseline\n2. LoRA on the attention projections\n3. LoRA on both attention and feed-forward projections.\n\nThis project came to mind when I was reading the \&quot;LoRA Without Regret\&quot; blog post by Thinking Machines; so many research ideas to explore! Well, I only knew LoRA conceptually before this, and I have never done any serious finetuning before except for a hackathon, so I think this challenge I have set for myself is pretty nice.\n&quot; &gt; README.md
 </code></pre>
 <p>Now try:</p>
-<pre><code>@README.md what's missing from this README that a new contributor would want?
+<pre><code class="language-claude">@README.md what's missing from this README that a new contributor would want?
 </code></pre>
 <p><img src="./assets/whats-missing-from-this-readme.png" alt="whats-missing-from-this-readme"></p>
 <p>The <code>@</code> triggers a fuzzy file picker. Whatever you pick gets read into context. That's your first non-trivial superpower: <strong>Claude Code sees what you point at</strong>.</p>
@@ -715,7 +715,7 @@ body {
 </code></pre>
 <h3 id="init" tabindex="-1"><code>/init</code></h3>
 <p>The fastest way to get started: in a fresh <code>claude</code> session in your repo, type:</p>
-<pre><code>/init
+<pre><code class="language-claude">/init
 </code></pre>
 <p><img src="./assets/claudeinit.png" alt="claudeinit"></p>
 <p>Claude inspects the repo and proposes a <code>CLAUDE.md</code>. Review it, trim it, accept. Don't accept what it proposes as it is, because it could end up including too much.</p>
@@ -782,12 +782,12 @@ We use uv, not pip. We use ruff, not black.
 <p><img src="./assets/file-picker.png" alt="file-picker"></p>
 <h3 id="a-live-demo" tabindex="-1">A live demo</h3>
 <p>Let's create a draft blog post in our project directory. Type:</p>
-<pre><code>make a draft at drafts/hello.md with a short intro to Claude Code,
+<pre><code class="language-claude">make a draft at drafts/hello.md with a short intro to Claude Code,
 suitable for someone who's used chatgpt
 </code></pre>
 <p><img src="./assets/drafts-hello.png" alt="drafts-hello"></p>
 <p>Claude proposes the file, shows you the content, asks permission, and once you approve, it writes it. Now, paste the following command to Claude Code:</p>
-<pre><code>@drafts/hello.md add a 3-section TOC at the top: intro, examples,
+<pre><code class="language-claude">@drafts/hello.md add a 3-section TOC at the top: intro, examples,
 gotchas, and stub each section with a one-line placeholder.
 </code></pre>
 <p><img src="./assets/diff-of-new-toc.png" alt="diff-of-new-toc"></p>
@@ -832,7 +832,7 @@ gotchas, and stub each section with a one-line placeholder.
 </blockquote>
 <h3 id="permissions-allowlists" tabindex="-1"><code>/permissions</code> allowlists</h3>
 <p>You can pin specific commands as always-allowed. Inside a session:</p>
-<pre><code>/permissions allow Bash(npm run lint)
+<pre><code class="language-claude">/permissions allow Bash(npm run lint)
 /permissions allow Bash(pytest *)
 </code></pre>
 <p>Now those particular commands run without prompting, even in default mode. This is how you keep the prompts where they matter: destructive commands stay gated, the safe stuff stops nagging.</p>
@@ -852,7 +852,7 @@ claude --resume my-oauth    # jump to a named session
 <p><img src="./assets/claude-resume.png" alt="claude-resume"></p>
 <h3 id="naming-sessions" tabindex="-1">Naming sessions</h3>
 <p>Inside a session:</p>
-<pre><code>/rename my-oauth-refactor
+<pre><code class="language-claude">/rename my-oauth-refactor
 </code></pre>
 <p>A name is much easier to find later than &quot;ff347a49-e961-444f-9dae-28553602ead5&quot;.
 Rename anything you might want to come back to.</p>
@@ -882,22 +882,22 @@ Rename anything you might want to come back to.</p>
 <p>Every file Claude reads, every command it runs, every output it sees, all of it goes into the context window. Long sessions get slow, expensive, and increasingly weird (the model starts forgetting what you said two hours ago).</p>
 <p>You have four tools to manage this. Use the right one.</p>
 <h3 id="compact-in-place-summary" tabindex="-1"><code>/compact</code> : in-place summary</h3>
-<pre><code>/compact
+<pre><code class="language-claude">/compact
 </code></pre>
 <p>Claude summarizes the current session in place, keeping the gist and dropping the detail. The conversation continues from the summary.</p>
 <p><img src="./assets/compact.png" alt="compact"></p>
 <p>You can pass instructions:</p>
-<pre><code>/compact preserve the test failures and the chosen API design
+<pre><code class="language-claude">/compact preserve the test failures and the chosen API design
 </code></pre>
 <p>The summary will keep what you asked it to keep. This is the single most underused command in Claude Code. Please run it between major phases of a long task.</p>
 <h3 id="clear-start-fresh-same-repo" tabindex="-1"><code>/clear</code> : start fresh, same repo</h3>
-<pre><code>/clear
+<pre><code class="language-claude">/clear
 </code></pre>
 <p>Wipes the conversation. CLAUDE.md still loads. Use this when you finish one task and want to start a different one in the same project. Boris Cherny's <a href="https://howborisusesclaudecode.com/">advice</a> is to <code>/clear</code> aggressively --- you'll be amazed how much faster the next task feels.</p>
 <h3 id="rewind-summarize-from-here-partial-compact" tabindex="-1"><code>/rewind</code> &quot;summarize from here&quot; : partial compact</h3>
 <p>We saw this in §5. It's another knob: keep the recent turns intact, summarize the older ones. Best when you've just made progress and don't want to lose detail on the last bit, but the early exploration can go.</p>
 <h3 id="btw-the-side-question" tabindex="-1"><code>/btw</code> : the side question</h3>
-<pre><code>/btw what's the difference between Sonnet and Opus?
+<pre><code class="language-claude">/btw what's the difference between Sonnet and Opus?
 </code></pre>
 <p><code>/btw</code> opens a dismissible overlay. Your question and Claude's answer don't enter the conversation history. Use this for context you want now and don't want polluting the session later.</p>
 <p><img src="./assets/btw.png" alt="btw"></p>
@@ -919,13 +919,13 @@ When compacting, always preserve:
 <p>A skill is a packaged instruction set you can invoke with <code>/skill-name</code>. Think of it as a reusable prompt with optional tool restrictions --- &quot;the way I want Claude to do X&quot; baked into one slash command.</p>
 <h3 id="skills" tabindex="-1"><code>/skills</code></h3>
 <p>In a session, type:</p>
-<pre><code>/skills
+<pre><code class="language-claude">/skills
 </code></pre>
 <p><img src="./assets/skills.png" alt="skills"></p>
 <p>You see what's currently loaded: both user-level (from <code>~/.claude/skills/</code>) and project-level (from <code>./.claude/skills/</code>).</p>
 <p>A fresh install has none. Let's install some.</p>
 <h3 id="plugin-and-the-marketplace" tabindex="-1"><code>/plugin</code> and the marketplace</h3>
-<pre><code>/plugin
+<pre><code class="language-claude">/plugin
 </code></pre>
 <p><img src="./assets/plugins.png" alt="plugins"></p>
 <p>A plugin bundles one or more skills (plus optional hooks and MCP servers) into one installable unit. The official Anthropic marketplace, <code>claude-plugins-official</code>, is the place to start.</p>
@@ -960,16 +960,16 @@ When compacting, always preserve:
 <h3 id="invoking-skills" tabindex="-1">Invoking skills</h3>
 <p>Two patterns, both work:</p>
 <p><strong>Leading.</strong> Skill at the start of the prompt:</p>
-<pre><code>/frontend-design look at @src/cute/blackwell_helpers.py and design a modern and clean HTML UI for me to visualize this code intuitively.
+<pre><code class="language-claude">/frontend-design look at @src/cute/blackwell_helpers.py and design a modern and clean HTML UI for me to visualize this code intuitively.
 </code></pre>
 <p><strong>Mid-prompt.</strong> Skill embedded in a larger instruction:</p>
-<pre><code>fix the failing test in @examples/inference/test_blackwell_helpers.py, then /code-simplifier the result.
+<pre><code class="language-claude">fix the failing test in @examples/inference/test_blackwell_helpers.py, then /code-simplifier the result.
 </code></pre>
 <p>Mid-prompt invocations work because skills are mounted as tools Claude can call; you're cueing it to use the tool, not running a separate command.</p>
 <h3 id="three-demos" tabindex="-1">Three demos</h3>
 <p><strong>Demo 1: <code>/frontend-design</code> on a codebase with complex logic.</strong></p>
 <p>Suppose I want to visualize the code in <a href="https://github.com/Dao-AILab/flash-attention/blob/main/flash_attn/cute/flash_fwd.py">src/cute/flash_fwd.py</a> since it's getting too complex for me.</p>
-<pre><code>/frontend-design look at @src/cute/flash_fwd.py and design a modern and clean HTML UI for me to visualize this code intuitively.
+<pre><code class="language-claude">/frontend-design look at @src/cute/flash_fwd.py and design a modern and clean HTML UI for me to visualize this code intuitively.
 </code></pre>
 <p><img src="./assets/frontend-design-skill.png" alt="frontend-design-skill"></p>
 <p>Here's what Opus 4.7 with xhigh effort and the <code>frontend-design</code> skill generated with just a single prompt.</p>
@@ -977,7 +977,7 @@ When compacting, always preserve:
 <p>Not a bad first iteration I think! Pretty interactive as well; I could learn from this.</p>
 <p><strong>Demo 2: <code>/frontend-design</code> to further improve the UI.</strong></p>
 <p>Suppose I want to further improve the UI. I can ask Claude to do so with the <code>frontend-design</code> skill again:</p>
-<pre><code>please help me improve this ui further for this file. pasting the screenshot here to show you how it looks: [Image #1]. this is genuinely good, but the text could be a bit more legible, perhaps? continue to use the /frontend-design skill
+<pre><code class="language-claude">please help me improve this ui further for this file. pasting the screenshot here to show you how it looks: [Image #1]. this is genuinely good, but the text could be a bit more legible, perhaps? continue to use the /frontend-design skill
 </code></pre>
 <p><img src="./assets/frontend-design-2nd-prompt.png" alt="frontend-design-2nd-prompt"></p>
 <p>Which gives me:</p>
@@ -1407,7 +1407,7 @@ file:line reference, and a one-sentence fix suggestion.
 <p>I've used routines for a couple of research projects where I would get updates every morning on the new research directions the cron job found via my Slack app that allowed me to quickly check in on the research on my way to work and take action if needed. I love this feature.</p>
 <h3 id="loop" tabindex="-1"><code>/loop</code></h3>
 <p>Where <code>/schedule</code> is &quot;every X minutes/days from now until I cancel&quot;, <code>/loop</code> is &quot;every X minutes inside this session until the task is done&quot;. Here's an example:</p>
-<pre><code>/loop 5m check if the deploy completed; if yes, run the smoke tests; if no, wait
+<pre><code class="language-claude">/loop 5m check if the deploy completed; if yes, run the smoke tests; if no, wait
 </code></pre>
 <p>Two modes:</p>
 <ul>
@@ -1417,7 +1417,7 @@ file:line reference, and a one-sentence fix suggestion.
 <p>Best use case: babysitting a long-running external process. CI runs, deploys, big migrations, etc. I used this one when I ran a 2-day long GPU training job for my research project. Very useful!</p>
 <h3 id="goal" tabindex="-1"><code>/goal</code></h3>
 <p>This one shipped in <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.139">v2.1.139</a> (May 2026). It's the &quot;keep working until done&quot; primitive. Here's an example:</p>
-<pre><code>/goal npm test exits 0 and there are no TypeScript errors
+<pre><code class="language-claude">/goal npm test exits 0 and there are no TypeScript errors
 </code></pre>
 <p>Mechanics:</p>
 <ul>
@@ -1430,7 +1430,7 @@ file:line reference, and a one-sentence fix suggestion.
 <p>The trap to avoid: <strong>vague goals run forever</strong>. &quot;Make this better&quot; is not a goal; there's no verifiable end state. &quot;All 12 unit tests pass&quot; is a goal. Combine <code>/goal</code> with <a href="#9-guardrails-hooks">section 9 (hooks)</a> and you have an autonomous worker that won't wander off. This can be pretty useful for people who have infinite token budgets and are planning to migrate big codebases from one language to another, or a huge refactor that needs to be done in multiple steps, and so on. This + the <code>/plan</code> mode can be a very powerful combination.</p>
 <h3 id="batch" tabindex="-1"><code>/batch</code></h3>
 <p>Fan-out: run the same prompt across multiple inputs (files, branches, items in a list).</p>
-<pre><code>/batch on each file under src/api/handlers/, add JSDoc to exported functions
+<pre><code class="language-claude">/batch on each file under src/api/handlers/, add JSDoc to exported functions
 </code></pre>
 <p>Each input gets processed in a separate context (so they don't interfere with each other). Useful for &quot;apply this change to all of X&quot; tasks. Reports back when each finishes.</p>
 <h3 id="background-tasks" tabindex="-1">Background tasks</h3>
@@ -1483,7 +1483,7 @@ cd ../db-migration &amp;&amp; claude
 <li><strong>Throwaway debugging UI.</strong> I had a stream of 800 events to triage. Claude built a one-page HTML viewer with a search box and filters. Took less time than <code>head -200 events.jsonl | jq</code>.</li>
 </ul>
 <p>Try it once. Ask Claude:</p>
-<pre><code>generate an interactive HTML file at status.html showing the four sections
+<pre><code class="language-claude">generate an interactive HTML file at status.html showing the four sections
 of this post as a clickable outline, with each section expandable to show
 the bullets underneath. inline css, no external deps.
 </code></pre>
@@ -1499,7 +1499,7 @@ the bullets underneath. inline css, no external deps.
 <h2 id="12-the-not-so-cool-basics-that-actually-matter" tabindex="-1">12. The not-so-cool basics that actually matter</h2>
 <p>This section is the one I wish someone had handed me on day one.</p>
 <h3 id="usage" tabindex="-1"><code>/usage</code></h3>
-<pre><code>/usage
+<pre><code class="language-claude">/usage
 </code></pre>
 <p>Token usage for the current session, plus your weekly total. Check it whenever you've done a lot of work - it grounds your intuition about which tasks are cheap and which aren't.</p>
 <h3 id="status" tabindex="-1"><code>/status</code></h3>
@@ -1573,7 +1573,7 @@ the bullets underneath. inline css, no external deps.
 <h3 id="weekly-cap" tabindex="-1">Weekly cap</h3>
 <p>Hard 7-day rolling cap. Shared across claude.ai, the IDE plugin, and Claude Code. If you're on a usage-based Enterprise or API-key setup, the equivalent concern is usually not &quot;wait until the weekly cap resets&quot;; it's &quot;how much spend cap or prepaid balance is left?&quot; If you're hitting weekly caps on a normal subscription, the math says you're not getting the value of the next tier up; so it's time to upgrade or to be more deliberate about <code>/clear</code>.</p>
 <h3 id="model" tabindex="-1"><code>/model</code></h3>
-<pre><code>/model
+<pre><code class="language-claude">/model
 </code></pre>
 <p>Switches between the three current models (as of May 2026, the 3 models are Haiku 4.5, Sonnet 4.6 - normal + 1m, and Opus 4.7 in the Claude subscription. NOT the models in the Claude Code API). Rule of thumb:</p>
 <table>
