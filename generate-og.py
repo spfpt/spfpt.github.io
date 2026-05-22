@@ -35,11 +35,11 @@ PAGES = [
         "footer": "spfpt.github.io",
     },
     {
-        "output": "claude-code-from-zero-to-agentic/og.png",
+        "output": "claude-code-101/og.png",
         "eyebrow": "essay / may 2026 / 35 min",
-        "title": "Claude Code, from zero to agentic",
+        "title": "Claude Code, in production",
         "subtitle": "A working guide from first prompt to agentic workflows.",
-        "footer": "spfpt.github.io/claude-code-from-zero-to-agentic",
+        "footer": "spfpt.github.io/claude-code-101",
     },
 ]
 

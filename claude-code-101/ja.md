@@ -2,7 +2,9 @@
 
 ChatGPT には慣れていて、Claude Code も同じ感覚で使えるようにしたい人向けの実践ガイドです。そこからさらに三、四歩先まで進みます。
 
-この記事は意図的に長くしています。最初は上から下まで一度通して読むのがおすすめです。ブックマークしておいて、実際に必要になったら [7. Skills: 探す、入れる、使う](#7-skills-discovering-installing-using) 以降に戻ってきてください。
+この記事は長めです。Claude Code が初めてなら、最初は上から下まで一度通して読むのがおすすめです。ブックマークしておいて、実際に必要になったら [7. Skills: 探す、入れる、使う](#7-skills-discovering-installing-using) 以降に戻ってきてください。
+
+すでに Claude Code に慣れている場合は、最初の章を飛ばして [CLAUDE.md](#2-claudemd-is-the-most-important-file-in-your-repo) から読んでも大丈夫です。あるいは、<a href="#toc-list" class="toc-open">目次を開いて</a>読みたい章へ移動してください。
 
 > 対象は Claude Code v2.1.145、2026年5月時点です。バージョンの進みが速いので、最近入った機能については、挙動が違うと感じたときに [release notes](https://github.com/anthropics/claude-code/releases) と照らし合わせられるようにしておきます。
 

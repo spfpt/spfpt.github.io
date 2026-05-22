@@ -8,15 +8,15 @@
 <meta property="og:title" content="Claude Code, in production: skills, sandboxes, subagents">
 <meta property="og:description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://spfpt.github.io/claude-code-from-zero-to-agentic/">
-<meta property="og:image" content="https://spfpt.github.io/claude-code-from-zero-to-agentic/og.png">
+<meta property="og:url" content="https://spfpt.github.io/claude-code-101/">
+<meta property="og:image" content="https://spfpt.github.io/claude-code-101/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Claude Code, in production: skills, sandboxes, subagents">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Claude Code, in production: skills, sandboxes, subagents">
 <meta name="twitter:description" content="A working guide to Claude Code: from your first prompt to advanced agentic workflows.">
-<meta name="twitter:image" content="https://spfpt.github.io/claude-code-from-zero-to-agentic/og.png">
+<meta name="twitter:image" content="https://spfpt.github.io/claude-code-101/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -608,12 +608,13 @@ body {
   <main id="main" class="article">
 <h1>Claude Code, in production: skills, sandboxes, subagents</h1>
 <p>A working guide for people who are comfortable with ChatGPT and want to make Claude Code feel the same way, and then go three or four steps further.</p>
-<p>This is long, on purpose. I advice you to read it top to bottom the first time. Bookmark it, and come back to <a href="#7-skills-discovering-installing-using">section 7</a> onwards when you actually need them.</p>
+<p>This is a long post. I advice you to read it top to bottom the first time if you're new to Claude Code, then bookmark it, and come back to <a href="#7-skills-discovering-installing-using">Skills: discovering, installing, using</a> and the sections after it when you actually need them.</p>
+<p>If you're already comfortable with Claude Code, you can skip the first section and go straight to <a href="#2-claudemd-is-the-most-important-file-in-your-repo">CLAUDE.md</a>. Or simply <a href="#toc-list" class="toc-open">open the table of contents</a> and click on the section you want to read.</p>
 <blockquote>
 <p>Targets Claude Code v2.1.145, May 2026. Versions move fast, so I'll flag features that shipped recently so you can sanity-check against the <a href="https://github.com/anthropics/claude-code/releases">release notes</a> if something looks off.</p>
 </blockquote>
 <blockquote>
-<p>Also, before we begin, please <a href="https://claude.ai/settings/usage">check how your Claude account is billed</a>. Pro/Max users mostly think in usage windows and weekly caps, while many Enterprise accounts are usage-based with custom spend caps and API-rate pricing. I cover this in detail in <a href="#12-the-not-so-cool-basics-that-actually-matter">section 12</a>, but it matters before you spend hours on the more expensive models like Opus.</p>
+<p>One more thing: check how your Claude account is billed. Pro/Max users mostly think in usage windows and weekly caps, while many Enterprise accounts are usage-based with custom spend caps and API-rate pricing. I cover this in detail in <a href="#12-the-not-so-cool-basics-that-actually-matter">section 12</a>, but it matters before you spend hours on the more expensive models like Opus.</p>
 </blockquote>
 
 <h2 id="1-from-chatgpt-to-claude-code" tabindex="-1">1. From ChatGPT to Claude Code</h2>

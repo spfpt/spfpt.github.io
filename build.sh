@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rebuild post HTML from the markdown source in ../fai-writeups/.
+# Rebuild post HTML from a markdown source file.
 #
 # Requires Node (uses npx to pull markdown-it + markdown-it-anchor on first run,
 # then caches them under /tmp/cc-build/node_modules). No npm install at the
@@ -7,9 +7,15 @@
 set -euo pipefail
 
 SITE_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-SRC_MD="${1:-$SITE_DIR/../fai-writeups/claude-code-from-zero-to-agentic/claude-code-from-zero-to-agentic.md}"
-POST_HTML="$SITE_DIR/claude-code-from-zero-to-agentic/index.html"
+SRC_MD="${1:-${SRC_MD:-}}"
+POST_HTML="$SITE_DIR/claude-code-101/index.html"
 BUILD_DIR="/tmp/cc-build"
+
+if [ -z "$SRC_MD" ]; then
+  echo "usage: ./build.sh /path/to/source.md" >&2
+  echo "   or: SRC_MD=/path/to/source.md ./build.sh" >&2
+  exit 1
+fi
 
 if [ ! -f "$SRC_MD" ]; then
   echo "error: source markdown not found at $SRC_MD" >&2
